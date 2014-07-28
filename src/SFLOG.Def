@@ -1,0 +1,18 @@
+;/**
+;*  (c) 2007-2014 Spider Financial Corp.
+;*  All rights reserved.
+;*  
+;*  $Revision: 12310 $
+;*  $Date: 2012-10-12 10:39:24 -0500 (Fri, 12 Oct 2012) $
+;*/
+
+VERSION		1.63
+
+;  entryname[=internalname] [@ordinal [NONAME]] [PRIVATE] [DATA]
+EXPORTS
+  SFLOG_Init      @100  NONAME
+  SFLOG_Shutdown  @105  NONAME
+  SFLOG_LogMsg    @110  NONAME
+  SFLOG_GETLEVEL  @115  NONAME
+  SFLOG_SETLEVEL  @120  NONAME
+

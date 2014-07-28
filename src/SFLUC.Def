@@ -1,0 +1,31 @@
+;/**
+;*  (c) 2007-2014 Spider Financial Corp.
+;*  All rights reserved.
+;*  
+;*  $Revision: 12310 $
+;*  $Date: 2012-10-12 10:39:24 -0500 (Fri, 12 Oct 2012) $
+;*/
+VERSION		1.63
+
+EXPORTS
+;  entryname[=internalname] [@ordinal [NONAME]] [PRIVATE] [DATA]
+  SFLUC_Init                @100  NONAME
+  SFLUC_Shutdown            @105  NONAME
+
+  SFLUC_CHECK_LICENSE       @200  NONAME
+  SFLUC_LICENSE_LEVEL       @205  NONAME
+  SFLUC_LICENSE_STATUS      @210  NONAME
+  SFLUC_CHECK_KEYCODE       @215  NONAME
+
+  ; XMLRPC Based API
+  SFLUC_SERVICEDATE         @220  NONAME
+  SFLUC_UPDATEVERSION       @225  NONAME
+
+  SFLUC_MACHINEID           @300  NONAME
+  SFLUC_LICENSE_KEY         @305  NONAME
+  SFLUC_LICENSE_KEY_EXPIRY  @310  NONAME
+  SFLUC_ACTIVATION_CODE     @315  NONAME
+
+
+
+
