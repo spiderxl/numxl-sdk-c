@@ -1515,7 +1515,7 @@ extern "C"
                              );
 
   /*! 
-  *   \brief Computes the logit transformation, including its inverse.
+  *   \brief Computes the complementary log-log transformation, including its inverse.
   *   \return status code of the operation
   *   \retval #NDK_SUCCESS Operation successful
   *   \retval #NDK_FAILED Operation unsuccessful. See \ref SFMacros.h for more details.
@@ -1528,7 +1528,7 @@ extern "C"
 
 
   /*! 
-  *   \brief Computes the Box-Cox transformation, including its inverse.
+  *   \brief Computes the complementary log-log transformation, including its inverse.
   *
   *   \return status code of the operation
   *   \retval #NDK_SUCCESS Operation successful

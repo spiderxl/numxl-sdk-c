@@ -60,15 +60,6 @@ extern "C"
   *   \retval Error code
   *   \sa SFMacros.h, SFLOG_Init()
   */
-  int   __stdcall SFLOG_GETLEVEL(int* nLevel /*!< [out] current logging level */);
-
-
-  /*! 
-  *   \brief log a message into the logging system
-  *   \retval NDK_SUCCESS Operation successful
-  *   \retval Error code
-  *   \sa SFMacros.h, SFLOG_SETLEVEL()
-  */
   int   __stdcall SFLOG_LogMsg( int nLevel,         ///< logging level (i.e. debug, info, trace, error, etc.)
                                 LPCSTR szFilename,  ///< the source filename that triggers this logging message
                                 LPCSTR szFuncName,  ///< the function name from which this log is triggered from
@@ -76,7 +67,13 @@ extern "C"
                                 int nLineNo,        ///< Line number in the source file
                                 LPCSTR szMsg        ///< Error message
                                 );
-
+  /*! 
+  *   \brief log a message into the logging system
+  *   \retval NDK_SUCCESS Operation successful
+  *   \retval Error code
+  *   \sa SFMacros.h, SFLOG_SETLEVEL()
+  */
+  int   __stdcall SFLOG_GETLEVEL(int* nLevel /*!< [out] current logging level */);
   /*! 
   *   \brief set the new logging level in the SDK
   *   \retval NDK_SUCCESS Operation successful
