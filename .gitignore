@@ -1,0 +1,9 @@
+*.ipch
+*.opensdf
+*.sdf
+*.tlog
+*.idb
+*.manifest
+tests/Smoothing/x64/Debug/Smoothing_manifest.rc
+tests/Smoothing/x64/Debug/Smoothing.lastbuildstate
+tests/Smoothing/x64/Debug/Smoothing.exe.embed.manifest.res
