@@ -1,16 +1,19 @@
 ;/**
-;*  (c) 2007-2014 Spider Financial Corp.
-;*  All rights reserved.
+;  Copyright © Spider Financial Corp - All rights reserved.
+;  Unauthorized copying of this file, via any medium is strictly prohibited
+;   Proprietary and confidential
 ;*  
-;*  $Revision: 14456 $
-;*  $Date: 2014-03-28 17:46:16 -0500 (Fri, 28 Mar 2014) $
+;*  $Revision: 15927 $
+;*  $Date: 2016-09-22 13:23:44 -0500 (Thu, 22 Sep 2016) $
 ;*/
-VERSION			1.63
+VERSION			1.64
+LIBRARY     SFSDK.dll
 
 ;  entryname[=internalname] [@ordinal [NONAME]] [PRIVATE] [DATA]
 EXPORTS
   NDK_Init        @100  NONAME
   NDK_Shutdown    @105  NONAME
+  NDK_RNG_SEED    @106  NONAME
   NDK_INFO        @110  NONAME
   NDK_MSG         @115  NONAME
 
@@ -21,6 +24,7 @@ EXPORTS
   NDK_PACF        @215   NONAME
   NDK_PACF_ERROR  @220   NONAME
   NDK_PACFCI      @225   NONAME
+  NDK_PERIODOGRAM @226   NONAME
 
   ; Statistical Test
   NDK_ACFTEST       @300   NONAME
@@ -224,6 +228,7 @@ EXPORTS
   NDK_SUB         @1022 NONAME
   NDK_SCALE       @1023 NONAME
   NDK_REVERSE     @1024 NONAME
+  NDK_RESAMPLE    @1025 NONAME
 
   ; Spectral Analysis
   NDK_DFT                           @1030 NONAME
@@ -275,7 +280,32 @@ EXPORTS
   NDK_X12_OUT_SERIES    @5035 NONAME  ; return the output time series (seasonally adjusted)
   NDK_X12_FORE_SERIES   @5040 NONAME  ; return the forecast output time series
 
+  ; X13ARIMA-SEATS Functions
+  NDK_X13_ENV_INIT        @5100 NONAME  ; prepare the X13ARIMA scripting environment
+  NDK_X13_ENV_CLEANUP     @5102 NONAME  ; Cleanup all files created by X13ARIMA program
+  NDK_X13_SCEN_INIT       @5105 NONAME  ; Prepare the X13 Model
+  NDK_X13_SCEN_CLEAUP     @5107 NONAME  ; cleanup all temp files related to a scenario (Model)
+  NDK_X13_DATA_FILE       @5110 NONAME  ; Write the data to the disk
+  NDK_X13_HOLIDAY_FILE    @5112 NONAME  ; Write the holiday dates to the disk
+  NDK_X13_USER_EVENT_FILE     @5115 NONAME  ; write user-defined list of dates to the disk
+  NDK_X13_ADD_EVENT_FACTOR    @5116 NONAME  ; Add a holiday or user-defined factor to a scenario
+  NDK_X13_REGRESSORS_SETTING  @5117 NONAME  ; Define the global settings for regressor variables
+  NDK_X13_RUN_GENHOL          @5118 NONAME  ; Convert the regressors.ini to genhol input file, and run the program
+  NDK_X13_RUN_BATCH           @5119 NONAME  ; run a batch file in X13A folder
+  NDK_X13_SPC_SERIES_SETTING    @5120 NONAME  ; define the data section in the SPC file
+  NDK_X13_SPC_TRANSFORM_SETTING @5121 NONAME  ; define the transform section of the SPC file
+  NDK_X13_SPC_PRIOR_ADJUST_SETTING  @5122 NONAME  ; define the prior adjustment section of the SPC file.
+  NDK_X13_SPC_X11_SETTING           @5123 NONAME  ; define the X11 section of the SPC file
+  NDK_X13_SPC_SEATS_SETTING         @5124 NONAME  ; define the SEATS section of the SPC file
+  NDK_X13_WRITE_SPC_FILE            @5125 NONAME  ; write the <scenario>.spc file from user options ini file.
+  NDK_X13_RUN_SPC_FILE              @5126 NONAME  ; run the X13AS to generate the output files.
+  NDK_X13AS_OUT_FILE                @5127 NONAME  ; open the output file in notepad
+  NDK_X13_SCEN_REFRESH              @5128 NONAME  ; refresh the status of different intermediate and output files.
+  NDK_X13AS_OUT_SERIES              @5129 NONAME  ; return the output series, using a series symbol
+
+
   ; Portfolio Analysis Function
   NDK_PORTFOLIO_RET         @5500 NONAME  ; Compute the portfolio equivalent returns
   NDK_PORTFOLIO_VARIANCE    @5502 NONAME  ; Compute the portfolio equivalent variance
   NDK_PORTFOLIO_COVARIANCE  @5504 NONAME  ; Compute the covariance between two portfolios, given their assets' weights
+

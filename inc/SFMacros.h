@@ -2,13 +2,14 @@
 *  \file SFMacros.h
 *  \brief  NumXL SDK error codes definitions
 *  \details  The information on this page is intended to be used by programmers so that the software they write can better deal with errors. If you are an end-user that is experiencing difficulty with an application you are installing or running, contact customer support for the software that is displaying the error message. 
-*  \copyright (c) 2007-2014 Spider Financial Corp.
-*             All rights reserved.
+*  \copyright © Spider Financial Corp - All rights reserved.
+*       Unauthorized copying of this file, via any medium is strictly prohibited
+*  	    Proprietary and confidential
 *  \author Spider Financial Corp
 *  \version 1.62
 *  
-*  $Revision: 12141 $
-*  $Date: 2012-06-29 16:25:58 -0500 (Fri, 29 Jun 2012) $
+*  $Revision: 15834 $
+*  $Date: 2016-08-25 13:54:04 -0500 (Thu, 25 Aug 2016) $
 */
 #pragma once
 
@@ -22,9 +23,10 @@
 #define NDK_FALSE                    1    ///< SUCCESS: return value is FALSE
 
 #define NDK_SDK_UNINITIALIZED       -10  ///< FAILED: The API NDK_INIT has not yet been called
-#define NDK_LOG_UNINITIALIZED       -11  ///< FAILED: The API NDK_INIT has not yet been called
-#define NDK_LUC_UNINITIALIZED       -12  ///< FAILED: The API NDK_INIT has not yet been called
-#define NDK_DBM_UNINITIALIZED       -13  ///< FAILED: The API NDK_INIT has not yet been called
+#define NDK_LOG_UNINITIALIZED       -11  ///< FAILED: The API NDK_LOG_INIT has not yet been called
+#define NDK_LUC_UNINITIALIZED       -12  ///< FAILED: The API NDK_LUC_INIT has not yet been called
+#define NDK_DBM_UNINITIALIZED       -13  ///< FAILED: The API NDK_DBM_INIT has not yet been called
+#define NDK_MSG_UNINITIALIZED       -14  ///< FAILED: The API NDK_MSG_INIT has not yet been called
 
 #define NDK_LOG_INIT_FAILED         -20   ///< FAILED: The logging system failed during initialization, check the configuration settings
 #define NDK_DB_INIT_FAILED          -21   ///< FAILED: Missing or failed to open the database file
@@ -57,6 +59,10 @@
 
 // Implementation status
 #define NDK_NOTSUPPORTED            -400  ///< FAILED: The required operation is not currently implemented/supported
+
+// LCID related error
+#define NDK_UNSUPPORTED_LCID        -500  ///< FAILED: the requested locality is either missing and/or unsupported by NumXL
+#define NDK_INVALID_LCID            -501  ///< FAILED: The requested locality is invalid.
 
 // Warnings codes
 #define NDK_RET_NAN                 100 ///< WARNING: The function returns an invalid (i.e. missing) value

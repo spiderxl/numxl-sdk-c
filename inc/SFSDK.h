@@ -5,12 +5,14 @@
 * 
 *  @brief  Header file for the public API of SFSDK library 
 *  @details function declaration for NumXL SDK Econometric and statistical APIs 
-*  @copyright &copy; 2007-2014 Spider Financial Corp.<BR>
-*             All rights reserved.
+*  @copyright &copy; Spider Financial Corp - All rights reserved.
+*  Unauthorized copying of this file, via any medium is strictly prohibited
+*   Proprietary and confidential
+
 *  @author Spider Financial Corp
 *  @version 1.62
 *  @see http://www.spiderfinancial.com
-*  $Date: 2014-05-23 16:15:31 -0500 (Fri, 23 May 2014) $
+*  $Date: 2016-09-30 17:07:28 -0500 (Fri, 30 Sep 2016) $
 */
 #pragma once
 
@@ -143,6 +145,22 @@ extern "C"
     NORMALTEST_CHISQ=3    ///< Chi-Square test - Doornik and Hansen, "An Omnibus Test for Normality", 1994.
   }NORMALTEST_METHOD;
 
+
+  /*!
+  * \ingroup statistical testing
+  * \sa NDK_ADFTEST()
+  */
+  typedef enum 
+  {
+    ADFTEST_DRIFT_ONLY=1,                   ///< Model 1: A stochastic drift
+    ADFTEST_DRIFT_N_CONST=2,                ///< Model II: A deterministic constant and stochastic drift
+    ADFTEST_DRIFT_N_TREND =3,               ///< Model III: A deterministic trend and stochastic drift
+    ADFTEST_DRIFT_N_CONST_N_TREND =4,       ///< Model IV: A deterministic constant, trend and stochastic drift
+    ADFTEST_DRIFT_N_CONST_TREND_TREND2 =5   ///< Model V: A deterministic constant, trend, trend^2 and stochastic drift
+  }ADFTEST_OPTION;
+
+
+
 /*!
   * \brief Support correlation methods
   * \sa NDK_XCFTEST(), NDK_XCF()
@@ -203,6 +221,75 @@ extern "C"
     COLNRTY_DET=3,  ///<  Determinant
     COLNRTY_EIGEN=4 ///<  Eigenvalues
   }COLNRTY_TEST_TYPE;
+
+  /*!
+  * \brief Periodogram method options
+  * \sa NDK_PERIODOGRAM()
+  */
+  typedef enum
+  {
+    PERIODOGRAM_NONE=1,         ///<  don't process the input data
+    PERIODOGRAM_DETREND=2,      ///<  detrend the input data
+    PERIODOGRAM_DIFFERENCE=3,   ///<  difference the time series (1,1)
+    PERIODOGRAM_AUTOPROC=4      ///<  Auto-process (e.g. detrend, difference, etc.) the input data.
+  }PERIODOGRAM_OPTION_TYPE;
+
+
+  /*!
+  * \brief Imputation methods for resampling
+  * \sa NDK_RESAMPLE()
+  */
+  typedef enum
+  {
+    IMPUTATION_NONE = 0,                 ///<  don't process the input data
+    IMPUTATION_INTERPOLATE_FWD =     1,  ///<  flat forward
+    IMPUTATION_INTERPOLATE_BKWD =    2,  ///<  flat backward
+    IMPUTATION_INTERPOLATE_LINEAR =  3,  ///<  Linear interpolation
+    IMPUTATION_INTERPOLATE_CSPLINE = 4,  ///<  cubic spline
+    IMPUTATION_FFT = 5                   ///<  Fast Fourier transform
+  }IMPUTATION_METHOD;
+
+  typedef enum
+  {
+    X13TRANSFOR_NONE = 0,                ///<  don't process the input data
+    X13TRANSFOR_AUTO = 1,                ///<  don't process the input data
+    X13TRANSFOR_LOG = 2,                 ///<  don't process the input data
+    X13TRANSFOR_SQRT = 3,                ///<  don't process the input data
+    X13TRANSFOR_INV = 4,                 ///<  don't process the input data
+    X13TRANSFOR_LOGIST = 5,              ///<  don't process the input data
+    X13TRANSFOR_BOXCOX = 6               ///<  don't process the input data
+  }X13TRANSFORM_METHOD;
+
+  typedef enum
+  {
+    X13PRIORADJUST_RATIO = 0,             ///< 
+    X13PRIORADJUST_PERCENT = 1,           ///< 
+    X13PRIORADJUST_DIFF = 2               ///< 
+  }X13PRIORADJUST_TYPE;
+
+  typedef enum
+  {
+    X11_MODE_MULT = 0,            ///< 
+    X11_MODE_ADD = 1,             ///< 
+    X11_MODE_PSEUDOADD = 2,       ///< 
+    X11_MODE_LOGADD = 3           ///< 
+  }X11_MODE_TYPE;
+
+
+  typedef enum
+  {
+    X11_SEASONALMA_3x1 = 0,            ///< 
+    X11_SEASONALMA_3x3 = 1,            ///< 
+    X11_SEASONALMA_3x5 = 2,            ///< 
+    X11_SEASONALMA_3x9 = 3,            ///< 
+    X11_SEASONALMA_3x15 = 4,           ///< 
+    X11_SEASONALMA_STABLE = 5,         ///< 
+    X11_SEASONALMA_DEFAULT = 6,        ///< 3x3 MA and 3x5
+    X11_SEASONALMA_MSR=7               ///< X-11-ARIMA88
+  }X11_SEASONALMA_TYPE;
+
+
+
 }
 
 // Functions API
@@ -244,10 +331,10 @@ extern "C"
       }
       @endcode
   */
-  int   __stdcall NDK_Init( LPCSTR szAppName,   ///<  [in] is the application name (user-defined), but must match the configuration base filename.
-                            LPCSTR szKey,       ///<  [in, optional] is the NumXL license key. If missing (NULL), NDK_Init will attempt to locate the license key & activation code in the system.
-                            LPCSTR szActCode,   ///<  [in, optional] is the license activation code. If missing (NULL), NDK_Init will attempt to locate the license key & activation code in the system.
-                            LPCSTR szTmpPath    ///<  [in, optional] is the full path of the log file directory. If NULL, NDK reverts to the temporary directory in the current user's profile.
+  int   __stdcall NDK_Init( LPCTSTR szAppName,   ///<  [in] is the application name (user-defined), but must match the configuration base filename.
+                            LPCTSTR szKey,       ///<  [in, optional] is the NumXL license key. If missing (NULL), NDK_Init will attempt to locate the license key & activation code in the system.
+                            LPCTSTR szActCode,   ///<  [in, optional] is the license activation code. If missing (NULL), NDK_Init will attempt to locate the license key & activation code in the system.
+                            LPCTSTR szTmpPath    ///<  [in, optional] is the full path of the log file directory. If NULL, NDK reverts to the temporary directory in the current user's profile.
                             );  
   
   
@@ -779,6 +866,7 @@ extern "C"
   int __stdcall NDK_ACF(double* X,      ///< [in] is the univariate time series data (a one dimensional array).
                         size_t N,       ///< [in] is the number of observations in X. 
                         size_t K,       ///< [in] is the lag order (e.g. k=0 (no lag), k=1 (1st lag), etc.).
+                        WORD method,    ///< [in] is the method selecor (0 = sample autocorrelation, 1= periodogram-based estimate, 2= cross-correlation based estimate).
                         double* retVal  ///< [out] is the calculated sample autocorrelation value. 
                         );
 
@@ -793,6 +881,7 @@ extern "C"
   int __stdcall NDK_ACF_ERROR(double* X,      ///< [in] is the univariate time series data (a one dimensional array).
                               size_t N,       ///< [in] is the number of observations in X. 
                               size_t K,       ///< [in] is the lag order (e.g. k=0 (no lag), k=1 (1st lag), etc.).
+                              WORD method,    ///< [in] is the method selecor (0 = sample autocorrelation, 1= periodogram-based estimate, 2= cross-correlation based estimate).
                               double* retVal  ///< [out] is the standard error in the sample autocorrelation value. 
                               );
 
@@ -830,6 +919,7 @@ extern "C"
   int __stdcall NDK_ACFCI(double* X,      ///< [in] is the univariate time series data (a one dimensional array).
                           size_t N,       ///< [in] is the number of observations in X. 
                           size_t K,       ///< [in] is the lag order (e.g. k=0 (no lag), k=1 (1st lag), etc.).
+                          WORD method,    ///< [in] is the method selecor (0 = sample autocorrelation, 1= periodogram-based estimate, 2= cross-correlation based estimate).
                           double alpha,   ///< [in] is the statistical significance level. If missing, a default of 5% is assumed. 
                           double* ULCI,   ///< [out] is the upper limit value of the confidence interval 
                           double* LLCI    ///< [out] is the lower limit value of the confidence interval.
@@ -874,6 +964,24 @@ extern "C"
                             double* ULCI,   ///< [out] is the upper limit value of the confidence interval.
                             double* LLCI    ///< [out] is the lower limit value of the confidence interval.
                             );
+
+
+
+  /*! 
+  *   \brief Calculates the periodgram value for different lags.
+  *   \return status code of the operation
+  *   \retval #NDK_SUCCESS Operation successful
+  *   \retval #NDK_FAILED Operation unsuccessful. See \ref SFMacros.h for more details.
+  *   \sa NDK_ACF(), NDK_PACF()
+  */
+  int __stdcall NDK_PERIODOGRAM(double* pData,            ///< [in] is the univariate time series data (a one dimensional array).
+                                size_t  nSize,            ///< [in] is the number of observations in pData. 
+                                PERIODOGRAM_OPTION_TYPE option, ///< [in] is the pre-processing option to the time series (e.g. detrend, difference, auto, etc.)
+                                double alpha,             ///< [in] is the statistical significance level (used in the auto-process procedure). If missing, a default of 5% is assumed.
+                                double* retVal,           ///< [out] is the periodogram values for this series
+                                size_t  nOutSize          ///< [in] is the size of the output buffer (i.e. retVal)
+                                );
+
 
   /*! 
   *   \brief Calculates the estimated value of the exponential-weighted volatility (EWV).  
@@ -1113,9 +1221,9 @@ extern "C"
   int __stdcall NDK_ACFTEST(double* X,        ///< [in] is the univariate time series data (a one dimensional array).
                             size_t N,         ///< [in] is the number of observations in X. 
                             int K,            ///< [in] is the lag order (e.g. k=0 (no lag), k=1 (1st lag), etc.).
+                            WORD method,      ///< [in] is the type of test: parametric or non-parametric.
                             double target,    ///< [in] is the assumed autocorrelation function value. If missing, the default of zero is assumed.
                             double alpha,     ///< [in] is the statistical significance level. If missing, a default of 5% is assumed.
-                            WORD method,      ///< [in] is the type of test: parametric or non-parametric.
                             WORD retType,     ///< [in] is a switch to select the return output: (\ref #TEST_RETURN)
                                               ///       1. P-value
                                               ///       2. Test statistics (aka score)
@@ -1282,7 +1390,7 @@ extern "C"
   int __stdcall NDK_ADFTEST(double* X,      ///< [in] is the univariate time series data (a one dimensional array).
                             size_t N,       ///< [in] is the number of observations in X.
                             WORD K,         ///< [in] is the lag length of the autoregressive process. If missing, an initial value equal to the cubic root of the input data size is used.
-                            WORD options,   ///< [in] is the model description flag for the Dickey-Fuller test variant (1=no constant, 2=contant-only, 3=trend only,  4=constant and trend, 5=const, trend and trend squared). 
+                            ADFTEST_OPTION options,   ///< [in] is the model description flag for the Dickey-Fuller test variant (1=no constant, 2=contant-only, 3=trend only,  4=constant and trend, 5=const, trend and trend squared). 
                             BOOL testDown,  ///< [in] is the mode of testing. If set to TRUE (default), ADFTest performs a series of tests. The test starts with the input length lag, but the actual length lag order used is obtained by testing down. 
                             double alpha,   ///< [in] is the statistical significance level. If missing, a default of 5% is assumed.
                             WORD method,    ///< [in] is the statistical test to perform (1=ADF).
@@ -1291,7 +1399,7 @@ extern "C"
                                             ///       2. Test statistics (aka score)
                                             ///       3. Critical value
 
-                            double* retVal  ///< [out] is the calculated test statistics.
+                            double* retVal  ///< [inout] is the calculated test statistics.
                             );
   int __stdcall NDK_KPSSTEST(double* pData, size_t nSize, WORD maxOrder, WORD option, BOOL testDown, WORD argMethod, WORD retType, double alpha, double* retVal);
 
@@ -1611,6 +1719,18 @@ extern "C"
                             );
 
 
+  /// \name Resampling
+  /// resampling API functions calls
+  /// @{
+
+  /*!
+  *   \brief Returns the resampled time series.
+  *   \return status code of the operation
+  *   \retval #NDK_SUCCESS Operation successful
+  *   \retval #NDK_FAILED operation is unsuccessful (see \ref SFMacros.h)
+  *   \sa NDK_SESMTH(), NDK_EWMA(), NDK_DESMTH(), NDK_TESMTH, NDK_LESMTH()
+  */
+  int   __stdcall NDK_RESAMPLE(double* pData, size_t nSize, BOOL isStock, double relSampling, IMPUTATION_METHOD method, double* pOutData, size_t *newSize);
 
   int   __stdcall	NDK_INTERP_BROWN(double* pData , size_t nSize);
   ///@}
@@ -2442,31 +2562,32 @@ extern "C"
   /// @{
   
   /*! 
-  * \brief Computes the log-likelihood ((LLF), Akaike Information Criterion (AIC) or other goodness of fit function of the ARMA model.   
+  * \brief Computes the log-likelihood (LLF), Akaike Information Criterion (AIC) or other goodness of fit functions of the ARMA model.
   * 
-  * \note 1. The time series is homogeneous or equally spaced
+  * \note 1. The time series is homogeneous or equally spaced.
   * \note 2. The time series may include missing values (e.g. NaN) at either end.
-  * \note 3. The residuals/innovations standard deviation (i.e.\f$\sigma\f$) should be greater than zero
+  * \note 3. The long-run mean can take any value or be omitted, in which case a zero value is assumed.
+  * \note 4. The residuals/innovations standard deviation (i.e.\f$\sigma\f$) should be greater than zero.
   *
   *   \return status code of the operation
-  *   \retval #NDK_SUCCESS Operation successful
+  *   \retval #NDK_SUCCESS operation successful
   *   \retval #NDK_FAILED operation is unsuccessful (see \ref SFMacros.h)
   *   \sa NDK_ARMA_PARAM(), NDK_ARMA_VALIDATE(), NDK_ARMA_FORE(), NDK_ARMA_RESID()
   */
   int __stdcall NDK_ARMA_GOF( double* pData,    ///< [in] is the univariate time series data (a one dimensional array).
-                              size_t nSize,     ///< [in] is the number of observations in X. 
-                              double mean,      ///< [in] is the ARMA model mean (i.e. mu). 
-                              double sigma,     ///< [in] is the standard deviation of the model's residuals/innovations. 
-                              double* phis,     ///< [in] are the parameters of the AR(p) component model (starting with the lowest lag). 
-                              size_t p,         ///< [in] is the number of elements in phis (order of AR component)
-                              double* thetas,   ///< [in] are the parameters of the MA(q) component model (starting with the lowest lag). 
-                              size_t q,         ///< [in] is the number of elements in thetas (order of MA component)
-                              WORD retType,     ///< [in] is a switch to select a fitness measure ( see \ref #GOODNESS_OF_FIT_FUNC)
-                              double* retVal    ///< [out] is the calculated goodness of fit value. 
+                              size_t nSize,     ///< [in] is the number of observations in X.
+                              double mean,      ///< [in] is the ARMA model mean (i.e. mu).
+                              double sigma,     ///< [in] is the standard deviation of the model's residuals/innovations.
+                              double* phis,     ///< [in] are the parameters of the AR(p) component model (starting with the lowest lag).
+                              size_t p,         ///< [in] is the number of elements in phis (order of AR component).
+                              double* thetas,   ///< [in] are the parameters of the MA(q) component model (starting with the lowest lag).
+                              size_t q,         ///< [in] is the number of elements in thetas (order of MA component).
+                              WORD retType,     ///< [in] is a switch to select a fitness measure ( see \ref #GOODNESS_OF_FIT_FUNC).
+                              double* retVal    ///< [out] is the calculated goodness of fit value.
                               );
 
   /*! 
-  * \brief Returns an array of cells for the standardized residuals of a given ARMA model 
+  * \brief Returns the standardized residuals of a given ARMA model 
   * 
   * \note 1. The time series is homogeneous or equally spaced
   * \note 2. The time series may include missing values (e.g. NaN) at either end.
@@ -2491,26 +2612,25 @@ extern "C"
 
 
   /*! 
-  * \brief Returns an array of cells for the initial (non-optimal), optimal or standard errors of the model's parameters.
+  * \brief Returns the initial (non-optimal), optimal or standard errors of the model's parameters.
   * 
-  * \note 1. The time series is homogeneous or equally spaced
+  * \note 1. The time series is homogeneous or equally spaced.
   * \note 2. The time series may include missing values (e.g. NaN) at either end.
-  * \note 3. The residuals/innovations standard deviation (i.e.\f$\sigma\f$) should be greater than zero
   *
   *   \return status code of the operation
-  *   \retval #NDK_SUCCESS Operation successful
+  *   \retval #NDK_SUCCESS operation successful
   *   \retval #NDK_FAILED operation is unsuccessful (see \ref SFMacros.h)
   *   \sa NDK_ARMA_GOF(), NDK_ARMA_VALIDATE(), NDK_ARMA_FORE(), NDK_ARMA_RESID()
   */
   int __stdcall NDK_ARMA_PARAM( double* pData,    ///< [in] is the univariate time series data (a one dimensional array).
-                                size_t nSize,     ///< [in] is the number of observations in X. 
-                                double* mean,     ///< [inout] is the ARMA model mean (i.e. mu). 
-                                double* sigma,    ///< [inout] is the standard deviation of the model's residuals/innovations. 
-                                double* phis,     ///< [inout] are the parameters of the AR(p) component model (starting with the lowest lag). 
-                                size_t p,         ///< [in] is the number of elements in phis (order of AR component)
-                                double* thetas,   ///< [inout] are the parameters of the MA(q) component model (starting with the lowest lag). 
-                                size_t q,         ///< [in] is the number of elements in thetas (order of MA component)
-                                MODEL_RETVAL_FUNC retType,     ///< [in] is a switch to select the type of value returned: 1= Quick Guess, 2=Calibrated, 3= Std. Errors ( see \ref #MODEL_RETVAL_FUNC)
+                                size_t nSize,     ///< [in] is the number of observations in X.
+                                double* mean,     ///< [inout] is the ARMA model mean (i.e. mu).
+                                double* sigma,    ///< [inout] is the standard deviation of the model's residuals/innovations.
+                                double* phis,     ///< [inout] are the parameters of the AR(p) component model (starting with the lowest lag).
+                                size_t p,         ///< [in] is the number of elements in phis (order of AR component).
+                                double* thetas,   ///< [inout] are the parameters of the MA(q) component model (starting with the lowest lag).
+                                size_t q,         ///< [in] is the number of elements in thetas (order of MA component).
+                                MODEL_RETVAL_FUNC retType,     ///< [in] is a switch to select the type of value returned: 1= Quick Guess, 2=Calibrated, 3= Std. Errors ( see \ref #MODEL_RETVAL_FUNC).
                                 size_t maxIter    ///< [in] is the maximum number of iterations used to calibrate the model. If missing or less than 100, the default maximum of 100 is assumed. 
                                 );
 
@@ -2518,98 +2638,103 @@ extern "C"
   /*! 
   * \brief Calculates the out-of-sample forecast statistics.
   * 
-  * \note 1. The time series is homogeneous or equally spaced
+  * \note 1. The time series is homogeneous or equally spaced.
   * \note 2. The time series may include missing values (e.g. NaN) at either end.
-  * \note 3. The residuals/innovations standard deviation (i.e.\f$\sigma\f$) should be greater than zero
+  * \note 3. The long-run mean can take any value or be omitted, in which case a zero value is assumed.
+  * \note 4. The residuals/innovations standard deviation (i.e.\f$\sigma\f$) should be greater than zero.
   *
   *   \return status code of the operation
-  *   \retval #NDK_SUCCESS Operation successful
+  *   \retval #NDK_SUCCESS operation successful
   *   \retval #NDK_FAILED operation is unsuccessful (see \ref SFMacros.h)
   *   \sa NDK_ARMA_PARAM(), NDK_ARMA_VALIDATE(), NDK_ARMA_GOF(), NDK_ARMA_RESID()
   */
   int __stdcall NDK_ARMA_FORE(  double* pData,    ///< [in] is the univariate time series data (a one dimensional array).
-                                size_t nSize,     ///< [in] is the number of observations in X. 
-                                double mean,      ///< [in] is the ARMA model mean (i.e. mu). 
-                                double sigma,     ///< [in] is the standard deviation of the model's residuals/innovations. 
-                                double* phis,     ///< [in] are the parameters of the AR(p) component model (starting with the lowest lag). 
-                                size_t p,         ///< [in] is the number of elements in phis (order of AR component)
-                                double* thetas,   ///< [in] are the parameters of the MA(q) component model (starting with the lowest lag). 
-                                size_t q,         ///< [in] is the number of elements in thetas (order of MA component)
-                                size_t nStep,     ///< [in] is the forecast time/horizon (expressed in terms of steps beyond end of the time series). 
+                                size_t nSize,     ///< [in] is the number of observations in X.
+                                double mean,      ///< [in] is the ARMA model mean (i.e. mu).
+                                double sigma,     ///< [in] is the standard deviation of the model's residuals/innovations.
+                                double* phis,     ///< [in] are the parameters of the AR(p) component model (starting with the lowest lag).
+                                size_t p,         ///< [in] is the number of elements in phis (order of AR component).
+                                double* thetas,   ///< [in] are the parameters of the MA(q) component model (starting with the lowest lag).
+                                size_t q,         ///< [in] is the number of elements in thetas (order of MA component).
+                                size_t nStep,     ///< [in] is the forecast time/horizon (expressed in terms of steps beyond end of the time series).
                                 FORECAST_RETVAL_FUNC retType,     ///< [in] is a switch to select the type of value returned (FORECAST_MEAN, FORECAST_STDEV , ..)
-                                                                  ///       (see \ref #FORECAST_RETVAL_FUNC)
-                                double  alpha,    ///< [in] is the statistical significance level. If missing, a default of 5% is assumed. 
-                                double* retVal    ///< [out] is the calculated forecast value
+                                                                  ///       (see \ref #FORECAST_RETVAL_FUNC).
+                                double  alpha,    ///< [in] is the statistical significance level. If missing, a default of 5% is assumed.
+                                double* retVal    ///< [out] is the calculated forecast value.
                                 );
 
 
   /*! 
-  * \brief Returns an array of cells for the fitted values (i.e. mean, volatility and residuals)
+  * \brief Returns the fitted values (i.e. mean, volatility and residuals).
   * 
-  * \note 1. The time series is homogeneous or equally spaced
+  * \note 1. The time series is homogeneous or equally spaced.
   * \note 2. The time series may include missing values (e.g. NaN) at either end.
-  * \note 3. The residuals/innovations standard deviation (i.e.\f$\sigma\f$) should be greater than zero
+  * \note 3. The long-run mean can take any value or be omitted, in which case a zero value is assumed.
+  * \note 4. The residuals/innovations standard deviation (i.e.\f$\sigma\f$) should be greater than zero.
   *
   *   \return status code of the operation
-  *   \retval #NDK_SUCCESS Operation successful
+  *   \retval #NDK_SUCCESS operation successful
   *   \retval #NDK_FAILED operation is unsuccessful (see \ref SFMacros.h)
   *   \sa NDK_ARMA_PARAM(), NDK_ARMA_VALIDATE(), NDK_ARMA_GOF(), NDK_ARMA_RESID(), NDK_ARMA_GOF()
   */
   int __stdcall NDK_ARMA_FITTED( double* pData,   ///< [inout] is the univariate time series data (a one dimensional array).
-                                size_t nSize,     ///< [in] is the number of observations in X. 
-                                double mean,      ///< [in] is the ARMA model mean (i.e. mu). 
-                                double sigma,     ///< [in] is the standard deviation of the model's residuals/innovations. 
-                                double* phis,     ///< [in] are the parameters of the AR(p) component model (starting with the lowest lag). 
-                                size_t p,         ///< [in] is the number of elements in phis (order of AR component)
-                                double* thetas,   ///< [in] are the parameters of the MA(q) component model (starting with the lowest lag). 
-                                size_t q,         ///< [in] is the number of elements in thetas (order of MA component)
-                                FIT_RETVAL_FUNC retType      ///< [in]  is a switch to select a output type ( see \ref #FIT_RETVAL_FUNC)
+                                size_t nSize,     ///< [in] is the number of observations in X.
+                                double mean,      ///< [in] is the ARMA model mean (i.e. mu).
+                                double sigma,     ///< [in] is the standard deviation of the model's residuals/innovations.
+                                double* phis,     ///< [in] are the parameters of the AR(p) component model (starting with the lowest lag).
+                                size_t p,         ///< [in] is the number of elements in phis (order of AR component).
+                                double* thetas,   ///< [in] are the parameters of the MA(q) component model (starting with the lowest lag).
+                                size_t q,         ///< [in] is the number of elements in thetas (order of MA component).
+                                FIT_RETVAL_FUNC retType      ///< [in]  is a switch to select a output type ( see \ref #FIT_RETVAL_FUNC).
                                 );
 
   /*! 
-  * \brief Examines the model's parameters for stability constraints (e.g. stationary, etc.). 
+  * \brief Examines the model's parameters for stability constraints (e.g. stationarity, invertibility, causality, etc.). 
   * 
-  * \note 1. The time series is homogeneous or equally spaced
+  * \note 1. The time series is homogeneous or equally spaced.
   * \note 2. The time series may include missing values (e.g. NaN) at either end.
-  * \note 3. The residuals/innovations standard deviation (i.e.\f$\sigma\f$) should be greater than zero
+  * \note 3. The long-run mean can take any value or be omitted, in which case a zero value is assumed.
+  * \note 4. The residuals/innovations standard deviation (i.e.\f$\sigma\f$) should be greater than zero
   *
   *   \return status code of the operation
-  *   \retval #NDK_TRUE Model is stable
-  *   \retval #NDK_FALSE Model is instable
+  *   \retval #NDK_TRUE model is stable
+  *   \retval #NDK_FALSE model is instable
   *   \retval #NDK_FAILED operation is unsuccessful (see \ref SFMacros.h)
   *   \sa NDK_ARMA_PARAM(), NDK_ARMA_VALIDATE(), NDK_ARMA_GOF(), NDK_ARMA_RESID(), NDK_ARMA_GOF()
   */
-  int __stdcall NDK_ARMA_VALIDATE(double mean,      ///< [in] is the ARMA model mean (i.e. mu). 
-                                  double sigma,     ///< [in] is the standard deviation of the model's residuals/innovations. 
-                                  double* phis,     ///< [in] are the parameters of the AR(p) component model (starting with the lowest lag). 
-                                  size_t p,         ///< [in] is the number of elements in phis (order of AR component)
-                                  double* thetas,   ///< [in] are the parameters of the MA(q) component model (starting with the lowest lag). 
-                                  size_t q          ///< [in] is the number of elements in thetas (order of MA component)
+  int __stdcall NDK_ARMA_VALIDATE(double mean,      ///< [in] is the ARMA model mean (i.e. mu).
+                                  double sigma,     ///< [in] is the standard deviation of the model's residuals/innovations.
+                                  double* phis,     ///< [in] are the parameters of the AR(p) component model (starting with the lowest lag).
+                                  size_t p,         ///< [in] is the number of elements in phis (order of AR component).
+                                  double* thetas,   ///< [in] are the parameters of the MA(q) component model (starting with the lowest lag).
+                                  size_t q          ///< [in] is the number of elements in thetas (order of MA component).
                                   );
 
   /*! 
-  * \brief Returns an array of cells for the simulated values 
+  * \brief Returns the simulated values.
   * 
-  * \note 1. The time series is homogeneous or equally spaced
-  * \note 2. The time series may include missing values (e.g. NaN) at either end.
-  * \note 3. The \f$\epsilon\f$ are normally distributed with mean zero and unit standard deviation.
-  *
+  * \note 1. ARMA_SIM returns an array of one simulation path starting from the end of the input data.
+  * \note 2. The input data argument (i.e. latest observations) is optional. If omitted, an array of zeroes is assumed.
+  * \note 3. The time series is homogeneous or equally spaced.
+  * \note 4. The time series may include missing values (e.g. NaN) at either end.
+  * \note 5. The long-run mean can take any value or be omitted, in which case a zero value is assumed.
+  * \note 6. The residuals/innovations standard deviation (sigma) must be greater than zero.
   *   \return status code of the operation
-  *   \retval #NDK_SUCCESS Operation successful
+  *   \retval #NDK_SUCCESS operation successful
   *   \retval #NDK_FAILED operation is unsuccessful (see \ref SFMacros.h)
   *   \sa NDK_ARMA_PARAM(), NDK_ARMA_VALIDATE(), NDK_ARMA_GOF(), NDK_ARMA_RESID(), NDK_ARMA_GOF()
   */
-  int __stdcall NDK_ARMA_SIM(double mean,         ///< [in] is the ARMA model mean (i.e. mu). 
-                            double sigma,         ///< [in] is the standard deviation of the model's residuals/innovations. 
-                            double* phis,         ///< [in] are the parameters of the AR(p) component model (starting with the lowest lag). 
-                            size_t p,             ///< [in] is the number of elements in phis (order of AR component)
-                            double* thetas,       ///< [in] are the parameters of the MA(q) component model (starting with the lowest lag). 
-                            size_t q,             ///< [in] is the number of elements in thetas (order of MA component)
-                            double* pData,        ///< [in] are the values of the latest (most recent) observations 
-                            size_t nSize,         ///< [in] is the number elements in pData
-                            UINT nSeed,           ///< [in] is a number to initialize the psuedorandom number generator.
-                            double* retArray,     ///< [out] is the output array to hold nSteps future simulations
-                            size_t  nSteps        ///< [in] is the number of future steps to simulate for.  
+  int __stdcall NDK_ARMA_SIM(double mean,         ///< [in] is the ARMA model long-run mean (i.e. mu).
+                            double sigma,         ///< [in] is the standard deviation of the model's residuals/innovations.
+                            double* phis,         ///< [in] are the parameters of the AR(p) component model (starting with the lowest lag).
+                            size_t p,             ///< [in] is the number of elements in phis (order of AR component).
+                            double* thetas,       ///< [in] are the parameters of the MA(q) component model (starting with the lowest lag).
+                            size_t q,             ///< [in] is the number of elements in thetas (order of MA component).
+                            double* pData,        ///< [in] are the values of the latest (most recent) observations.
+                            size_t nSize,         ///< [in] is the number elements in pData.
+                            UINT nSeed,           ///< [in] is an unsigned integer to initialize the psuedorandom number generator.
+                            double* retArray,     ///< [out] is the output array to hold nSteps future simulations.
+                            size_t  nSteps        ///< [in] is the number of future steps to simulate for.
                             );
 
   ///@}
@@ -2619,149 +2744,160 @@ extern "C"
   /// @{
 
   /*! 
-  * \brief   Examines the model's parameters for stability constraints (e.g. stationary, etc.). 
+  * \brief   Examines the model's parameters for stability constraints (e.g. stationarity, invertibility, causality, etc.).
   * 
-  * \note 1. The time series is homogeneous or equally spaced
-  * \note 2. The time series may include missing values (e.g. NaN) at either end.
-  * \note 3. The residuals/innovations standard deviation (i.e.\f$\sigma\f$) should be greater than zero
+  * \note 1. The time series is homogeneous or equally spaced.
+  * \note 2. The integration order argument (d) must be a positive integer.
+  * \note 3. The time series may include missing values (e.g. NaN) at either end.
+  * \note 4. The long-run mean can take any value or may be omitted, in which case a zero value is assumed.
+  * \note 5. The residuals/innovations standard deviation (i.e.\f$\sigma\f$) should be greater than zero.
   *
   *   \return status code of the operation
-  *   \retval #NDK_SUCCESS Operation successful
+  *   \retval #NDK_SUCCESS operation successful
   *   \retval #NDK_FAILED operation is unsuccessful (see \ref SFMacros.h)
   *   \sa NDK_ARIMA_GOF(), NDK_ARIMA_PARAM(), NDK_ARIMA_FORE(), NDK_ARIMA_FITTED(), NDK_ARIMA_SIM()
   */
 
-  int __stdcall NDK_ARIMA_VALIDATE( double mean,      ///< [in] is the ARMA model mean (i.e. mu). 
-                                    double sigma,     ///< [in] is the standard deviation of the model's residuals/innovations. 
+  int __stdcall NDK_ARIMA_VALIDATE( double mean,      ///< [in] is the ARMA model mean (i.e. mu).
+                                    double sigma,     ///< [in] is the standard deviation of the model's residuals/innovations.
                                     WORD nIntegral,   ///< [in] is the integration order.
-                                    double* phis,     ///< [in] are the parameters of the AR(p) component model (starting with the lowest lag). 
-                                    size_t p,         ///< [in] is the number of elements in phis (order of AR component)
-                                    double* thetas,   ///< [in] are the parameters of the MA(q) component model (starting with the lowest lag). 
-                                    size_t q         ///< [in] is the number of elements in thetas (order of MA component)
+                                    double* phis,     ///< [in] are the parameters of the AR(p) component model (starting with the lowest lag).
+                                    size_t p,         ///< [in] is the number of elements in phis (order of AR component).
+                                    double* thetas,   ///< [in] are the parameters of the MA(q) component model (starting with the lowest lag).
+                                    size_t q         ///< [in] is the number of elements in thetas (order of MA component).
                                     );
   /*! 
-  * \brief Computes the log-likelihood ((LLF), Akaike Information Criterion (AIC) or other goodness of fit function of the ARIMA model.   
+  * \brief Computes the log-likelihood ((LLF), Akaike Information Criterion (AIC) or other goodness of fit functions of the ARIMA model.
   * 
-  * \note 1. The time series is homogeneous or equally spaced
+  * \note 1. The time series is homogeneous or equally spaced.
   * \note 2. The time series may include missing values (e.g. NaN) at either end.
-  * \note 3. The residuals/innovations standard deviation (i.e.\f$\sigma\f$) should be greater than zero
+  * \note 3. The long-run mean can take any value or be omitted, in which case a zero value is assumed.
+  * \note 4. The residuals/innovations standard deviation (i.e.\f$\sigma\f$) should be greater than zero.
   *
   *   \return status code of the operation
-  *   \retval #NDK_SUCCESS Operation successful
+  *   \retval #NDK_SUCCESS operation successful
   *   \retval #NDK_FAILED operation is unsuccessful (see \ref SFMacros.h)
   *   \sa NDK_ARIMA_VALIDATE(), NDK_ARIMA_PARAM(), NDK_ARIMA_FORE(), NDK_ARIMA_FITTED(), NDK_ARIMA_SIM()
   */
   int __stdcall NDK_ARIMA_GOF( double* X,             ///< [in] is the univariate time series data (a one dimensional array).
-                               size_t nSize,          ///< [in] is the number of observations in X. 
-                               double mean,           ///< [in] is the ARMA model mean (i.e. mu). 
-                               double sigma,          ///< [in] is the standard deviation of the model's residuals/innovations. 
+                               size_t nSize,          ///< [in] is the number of observations in X.
+                               double mean,           ///< [in] is the ARMA model mean (i.e. mu).
+                               double sigma,          ///< [in] is the standard deviation of the model's residuals/innovations.
                                WORD nIntegral,        ///< [in] is the model's integration order.
-                               double* phis,          ///< [in] are the parameters of the AR(p) component model (starting with the lowest lag). 
-                               size_t p,              ///< [in] is the number of elements in phis (order of AR component)
-                               double* thetas,        ///< [in] are the parameters of the MA(q) component model (starting with the lowest lag). 
-                               size_t q,              ///< [in] is the number of elements in thetas (order of MA component)
-                               GOODNESS_OF_FIT_FUNC retType,          ///< [in] is a switch to select a fitness measure ( see \ref #GOODNESS_OF_FIT_FUNC)
-                               double* retVal         ///< [out] is the calculated GOF return value
+                               double* phis,          ///< [in] are the parameters of the AR(p) component model (starting with the lowest lag).
+                               size_t p,              ///< [in] is the number of elements in phis (order of AR component).
+                               double* thetas,        ///< [in] are the parameters of the MA(q) component model (starting with the lowest lag).
+                               size_t q,              ///< [in] is the number of elements in thetas (order of MA component).
+                               GOODNESS_OF_FIT_FUNC retType,          ///< [in] is a switch to select a fitness measure ( see \ref #GOODNESS_OF_FIT_FUNC).
+                               double* retVal         ///< [out] is the calculated GOF return value.
                                );
   /*! 
-  * \brief  Returns an array of cells for the initial (non-optimal), optimal or standard errors of the model's parameters.
+  * \brief  Returns the quick guess, optimal (calibrated) or std. errors of the values of the model's parameters.
   * 
-  * \note 1. The time series is homogeneous or equally spaced
+  * \note 1. The time series is homogeneous or equally spaced.
   * \note 2. The time series may include missing values (e.g. NaN) at either end.
-  * \note 3. The residuals/innovations standard deviation (i.e.\f$\sigma\f$) should be greater than zero
+  * \note 3. The integration order argument (d) must be a positive integer.
+  * \note 4. The long-run mean can take any value or may be omitted, in which case a zero value is assumed.
+  * \note 5. The residuals/innovations standard deviation (i.e.\f$\sigma\f$) should be greater than zero.
   *
   *   \return status code of the operation
-  *   \retval #NDK_SUCCESS Operation successful
+  *   \retval #NDK_SUCCESS operation successful
   *   \retval #NDK_FAILED operation is unsuccessful (see \ref SFMacros.h)
   *   \sa NDK_ARIMA_VALIDATE(), NDK_ARIMA_GOF(), NDK_ARIMA_FORE(), NDK_ARIMA_FITTED(), NDK_ARIMA_SIM()
   */
   int __stdcall NDK_ARIMA_PARAM( double* pData,       ///< [in] is the univariate time series data (a one dimensional array).
-                                 size_t nSize,        ///< [in] is the number of observations in X. 
-                                 double* mean,        ///< [inout] is the ARMA model mean (i.e. mu). 
-                                 double* sigma,       ///< [inout] is the standard deviation of the model's residuals/innovations. 
+                                 size_t nSize,        ///< [in] is the number of observations in X.
+                                 double* mean,        ///< [inout] is the ARMA model mean (i.e. mu).
+                                 double* sigma,       ///< [inout] is the standard deviation of the model's residuals/innovations.
                                  WORD nIntegral,      ///< [in] is the model's integration order.
-                                 double* phis,        ///< [inout] are the parameters of the AR(p) component model (starting with the lowest lag). 
-                                 size_t p,            ///< [in] is the number of elements in phis (order of AR component)
-                                 double* thetas,      ///< [inout] are the parameters of the MA(q) component model (starting with the lowest lag). 
-                                 size_t q,            ///< [in] is the number of elements in thetas (order of MA component)
-                                 MODEL_RETVAL_FUNC retType,   ///< [in] is a switch to select the type of value returned: 1= Quick Guess, 2=Calibrated, 3= Std. Errors ( see \ref #MODEL_RETVAL_FUNC)
-                                 size_t maxIter       ///< [in] is the maximum number of iterations used to calibrate the model. If missing or less than 100, the default maximum of 100 is assumed. 
+                                 double* phis,        ///< [inout] are the parameters of the AR(p) component model (starting with the lowest lag).
+                                 size_t p,            ///< [in] is the number of elements in phis (order of AR component).
+                                 double* thetas,      ///< [inout] are the parameters of the MA(q) component model (starting with the lowest lag).
+                                 size_t q,            ///< [in] is the number of elements in thetas (order of MA component).
+                                 MODEL_RETVAL_FUNC retType,   ///< [in] is a switch to select the type of value returned: 1= Quick Guess, 2=Calibrated, 3= Std. Errors ( see \ref #MODEL_RETVAL_FUNC).
+                                 size_t maxIter       ///< [in] is the maximum number of iterations used to calibrate the model. If missing or less than 100, the default maximum of 100 is assumed.
                                  );
 
 
   /*! 
-  * \brief Returns an array of cells for the simulated values 
+  * \brief Calculates the out-of-sample simulated values. 
   * 
-  * \note 1. The time series is homogeneous or equally spaced
-  * \note 2. The time series may include missing values (e.g. NaN) at either end.
-  * \note 3. The \f$\epsilon\f$ are normally distributed with mean zero and unit standard deviation.
+  * \note 1. The input data argument (i.e. latest observations) is optional. If omitted, an array of zeroes is assumed. 
+  * \note 2. The time series is homogeneous or equally spaced.
+  * \note 3. The time series may include missing values (e.g. NaN) at either end.
+  * \note 4. The input data argument (i.e. latest observations) is optional. If omitted, an array of zeroes is assumed. 
+  * \note 5. The residuals/innovations standard deviation (sigma) must be greater than zero.
   *
   *   \return status code of the operation
-  *   \retval #NDK_SUCCESS Operation successful
+  *   \retval #NDK_SUCCESS operation successful
   *   \retval #NDK_FAILED operation is unsuccessful (see \ref SFMacros.h)
   *   \sa NDK_ARIMA_VALIDATE(), NDK_ARIMA_GOF(), NDK_ARIMA_FORE(), NDK_ARIMA_FITTED(), NDK_ARIMA_PARAM()
   */
-  int __stdcall NDK_ARIMA_SIM(  double mean,        ///< [in] is the ARMA model mean (i.e. mu). 
-                                double sigma,       ///< [in] is the standard deviation of the model's residuals/innovations. 
+  int __stdcall NDK_ARIMA_SIM(  double mean,        ///< [in] is the ARMA model mean (i.e. mu).
+                                double sigma,       ///< [in] is the standard deviation of the model's residuals/innovations.
                                 WORD nIntegral,     ///< [in] is the model's integration order.
-                                double* phis,       ///< [in] are the parameters of the AR(p) component model (starting with the lowest lag). 
-                                size_t p,           ///< [in] is the number of elements in phis (order of AR component)
-                                double* thetas,     ///< [in] are the parameters of the MA(q) component model (starting with the lowest lag). 
-                                size_t q,           ///< [in] is the number of elements in thetas (order of MA component)
+                                double* phis,       ///< [in] are the parameters of the AR(p) component model (starting with the lowest lag).
+                                size_t p,           ///< [in] is the number of elements in phis (order of AR component).
+                                double* thetas,     ///< [in] are the parameters of the MA(q) component model (starting with the lowest lag).
+                                size_t q,           ///< [in] is the number of elements in thetas (order of MA component).
                                 double* pData,      ///< [in] is the univariate time series data (a one dimensional array).
-                                size_t nSize,       ///< [in] is the number of observations in X. 
-                                UINT nSeed,       ///< [in] is an unsigned integer for setting up the random number generators
-                                double* retVal,   ///< [out] is the calculated simulation value
-                                size_t nSteps     ///< [in] is the number of future steps to simulate for.  
+                                size_t nSize,       ///< [in] is the number of observations in X.
+                                UINT nSeed,       ///< [in] is an unsigned integer for setting up the random number generators.
+                                double* retVal,   ///< [out] is the calculated simulation value.
+                                size_t nSteps     ///< [in] is the number of future steps to simulate for.
                                 );
   /*! 
-  * \brief   Calculates the out-of-sample forecast statistics.
+  * \brief   Calculates the out-of-sample conditional forecast (i.e. mean, error, and confidence interval).
   * 
-  * \note 1. The time series is homogeneous or equally spaced
+  * \note 1. The time series is homogeneous or equally spaced.
   * \note 2. The time series may include missing values (e.g. NaN) at either end.
-  * \note 3. The residuals/innovations standard deviation (i.e.\f$\sigma\f$) should be greater than zero
+  * \note 3. The integration order argument (d) must be a positive integer.
+  * \note 4. The long-run mean can take any value or may be omitted, in which case a zero value is assumed.
+  * \note 5. The residuals/innovations standard deviation (i.e.\f$\sigma\f$) should be greater than zero.
   *
   *   \return status code of the operation
-  *   \retval #NDK_SUCCESS Operation successful
+  *   \retval #NDK_SUCCESS operation successful
   *   \retval #NDK_FAILED operation is unsuccessful (see \ref SFMacros.h)
   *   \sa NDK_ARIMA_VALIDATE(), NDK_ARIMA_GOF(), NDK_ARIMA_SIM(), NDK_ARIMA_FITTED(), NDK_ARIMA_PARAM()
   */
   int __stdcall NDK_ARIMA_FORE( double* pData,      ///< [in] is the univariate time series data (a one dimensional array).
-                                size_t nSize,       ///< [in] is the number of observations in X. 
-                                double mean,        ///< [in] is the ARMA model mean (i.e. mu). 
-                                double sigma,       ///< [in] is the standard deviation of the model's residuals/innovations. 
+                                size_t nSize,       ///< [in] is the number of observations in X.
+                                double mean,        ///< [in] is the ARMA model mean (i.e. mu).
+                                double sigma,       ///< [in] is the standard deviation of the model's residuals/innovations.
                                 WORD nIntegral,     ///< [in] is the model's integration order.
-                                double* phis,       ///< [in] are the parameters of the AR(p) component model (starting with the lowest lag). 
-                                size_t p,           ///< [in] is the number of elements in phis (order of AR component)
-                                double* thetas,     ///< [in] are the parameters of the MA(q) component model (starting with the lowest lag). 
-                                size_t q,           ///< [in] is the number of elements in thetas (order of MA component)
-                                size_t nStep,       ///< [in] is the forecast time/horizon (expressed in terms of steps beyond end of the time series). 
-                                FORECAST_RETVAL_FUNC retType, ///< [in] is a switch to select the type of value returned (see \ref #FORECAST_RETVAL_FUNC)
-                                double  alpha,                ///< [in] is the statistical significance level. If missing, a default of 5% is assumed. 
-                                double* retVal                ///< [out] is the calculated forecast value
+                                double* phis,       ///< [in] are the parameters of the AR(p) component model (starting with the lowest lag).
+                                size_t p,           ///< [in] is the number of elements in phis (order of AR component).
+                                double* thetas,     ///< [in] are the parameters of the MA(q) component model (starting with the lowest lag).
+                                size_t q,           ///< [in] is the number of elements in thetas (order of MA component).
+                                size_t nStep,       ///< [in] is the forecast time/horizon (expressed in terms of steps beyond end of the time series).
+                                FORECAST_RETVAL_FUNC retType, ///< [in] is a switch to select the type of value returned (see \ref #FORECAST_RETVAL_FUNC).
+                                double  alpha,                ///< [in] is the statistical significance level. If missing, a default of 5% is assumed.
+                                double* retVal                ///< [out] is the calculated forecast value.
                                 );
   /*! 
-  * \brief   Returns an array of cells for the fitted values (i.e. mean, volatility and residuals)
+  * \brief   Returns the in-sample model fitted values of the conditional mean, volatility or residuals.
   * 
-  * \note 1. The time series is homogeneous or equally spaced
+  * \note 1. The time series is homogeneous or equally spaced.
   * \note 2. The time series may include missing values (e.g. NaN) at either end.
-  * \note 3. The residuals/innovations standard deviation (i.e.\f$\sigma\f$) should be greater than zero
+  * \note 3. The integration order argument (d) must be a positive integer.
+  * \note 4. The long-run mean can take any value or may be omitted, in which case a zero value is assumed.
+  * \note 5. The residuals/innovations standard deviation (i.e.\f$\sigma\f$) should be greater than zero.
   *
   *   \return status code of the operation
-  *   \retval #NDK_SUCCESS Operation successful
+  *   \retval #NDK_SUCCESS operation successful
   *   \retval #NDK_FAILED operation is unsuccessful (see \ref SFMacros.h)
   *   \sa NDK_ARIMA_VALIDATE(), NDK_ARIMA_GOF(), NDK_ARIMA_SIM(), NDK_ARIMA_FORE(), NDK_ARIMA_PARAM()
   */
   int __stdcall NDK_ARIMA_FITTED( double* pData,      ///< [inout] is the univariate time series data (a one dimensional array).
-                                  size_t nSize,       ///< [in] is the number of observations in X. 
-                                  double mean,        ///< [in] is the ARMA model mean (i.e. mu). 
-                                  double sigma,       ///< [in] is the standard deviation of the model's residuals/innovations. 
+                                  size_t nSize,       ///< [in] is the number of observations in X.
+                                  double mean,        ///< [in] is the ARMA model mean (i.e. mu).
+                                  double sigma,       ///< [in] is the standard deviation of the model's residuals/innovations.
                                   WORD nIntegral,     ///< [in] is the model's integration order.
-                                  double* phis,       ///< [in] are the parameters of the AR(p) component model (starting with the lowest lag). 
-                                  size_t p,           ///< [in] is the number of elements in phis (order of AR component)
-                                  double* thetas,     ///< [in] are the parameters of the MA(q) component model (starting with the lowest lag). 
-                                  size_t q,           ///< [in] is the number of elements in thetas (order of MA component)
-                                  FIT_RETVAL_FUNC retType ///< [in]  is a switch to select a output type ( see \ref #FIT_RETVAL_FUNC)
+                                  double* phis,       ///< [in] are the parameters of the AR(p) component model (starting with the lowest lag).
+                                  size_t p,           ///< [in] is the number of elements in phis (order of AR component).
+                                  double* thetas,     ///< [in] are the parameters of the MA(q) component model (starting with the lowest lag).
+                                  size_t q,           ///< [in] is the number of elements in thetas (order of MA component).
+                                  FIT_RETVAL_FUNC retType ///< [in]  is a switch to select a output type ( see \ref #FIT_RETVAL_FUNC).
                                   );
   ///@}
 
@@ -2783,7 +2919,7 @@ extern "C"
   */
   int __stdcall NDK_FARIMA_GOF( double* pData, size_t nSize,  double mean, double sigma, double nIntegral, double* phis, size_t p, double* thetas, size_t q,  WORD retType, double* retVal);
   /*! 
-  * \brief  Returns an array of cells for the standardized residuals of a given FARIMA model    
+  * \brief  Returns the standardized residuals of a given FARIMA model    
   * 
   * \note 1. The time series is homogeneous or equally spaced
   * \note 2. The time series may include missing values (e.g. NaN) at either end.
@@ -2796,7 +2932,7 @@ extern "C"
   */
   int __stdcall NDK_FARIMA_RESID( double* pData/*IN-OUT*/, size_t nSize, double mean, double sigma, double nIntegral, double* phis, size_t p, double* thetas, size_t q, WORD retType);
   /*! 
-  * \brief  Returns an array of cells for the initial (non-optimal), optimal or standard errors of the model's parameters.
+  * \brief  Returns the initial (non-optimal), optimal or standard errors of the model's parameters.
   * 
   * \note 1. The time series is homogeneous or equally spaced
   * \note 2. The time series may include missing values (e.g. NaN) at either end.
@@ -2857,184 +2993,211 @@ extern "C"
   /// @{
 
   /*! 
-  * \brief Computes the log-likelihood ((LLF), Akaike Information Criterion (AIC) or other goodness of fit function of the SARIMA model.   
+  * \brief Computes the log-likelihood ((LLF), Akaike Information Criterion (AIC) or other goodness of fit function of the SARIMA model.
   * 
-  * \note 1. The time series is homogeneous or equally spaced
+  * \note 1. The time series is homogeneous or equally spaced.
   * \note 2. The time series may include missing values (e.g. NaN) at either end.
-  * \note 3. The residuals/innovations standard deviation (i.e.\f$\sigma\f$) should be greater than zero
+  * \note 3. The residuals/innovations standard deviation (i.e.\f$\sigma\f$) should be greater than zero.
+  * \note 4. The maximum likelihood estimation (MLE) is a statistical method for fitting a model to the data and provides estimates for the model's parameters.
+  * \note 5. The long-run mean argument (mean) can take any value or be omitted, in which case a zero value is assumed.
+  * \note 6. The non-seasonal integration order - d - is optional and can be omitted, in which case d is assumed to be zero.
+  * \note 7. The seasonal integration order - sD - is optional and can be omitted, in which case sD is assumed to be zero.
+  * \note 8. The season length - s - is optional and can be omitted, in which case s is assumed to be zero (i.e. plain ARIMA).
   *
   *   \return status code of the operation
-  *   \retval #NDK_SUCCESS Operation successful
+  *   \retval #NDK_SUCCESS operation successful
   *   \retval #NDK_FAILED operation is unsuccessful (see \ref SFMacros.h)
   *   \sa NDK_SARIMA_RESID(), NDK_SARIMA_PARAM(), NDK_SARIMA_FORE(), NDK_SARIMA_FITTED(), NDK_SARIMA_VALIDATE()
   */
   int __stdcall NDK_SARIMA_GOF( double* pData,      ///< [in] is the univariate time series data (a one dimensional array).
-                              size_t nSize,         ///< [in] is the number of observations in X. 
-                              double mean,          ///< [in] is the model mean (i.e. mu). 
-                              double sigma,         ///< [in] is the standard deviation of the model's residuals/innovations. 
-                              WORD nIntegral,       ///< [in] is the non-seasonal difference order
-                              double* phis,         ///< [in] are the coefficients's values of the non-seasonal AR component  
-                              size_t p,             ///< [in] is the order of the non-seasonal AR component
-                              double* thetas,       ///< [in] are the coefficients's values of the non-seasonal MA component
-                              size_t q,             ///< [in] is the order of the non-seasonal MA component
-                              WORD nSIntegral,      ///< [in] is the seasonal difference
-                              WORD nSPeriod,        ///< [in] is the number of observations per one period (e.g. 12=Annual, 4=Quarter)
-                              double* sPhis,        ///< [in] are the coefficients's values of the seasonal AR component
-                              size_t sP,            ///< [in] is the order of the seasonal AR component
-                              double* sThetas,      ///< [in] are the coefficients's values of the seasonal MA component 
-                              size_t sQ,            ///< [in] is the order of the seasonal MA component
-                              GOODNESS_OF_FIT_FUNC retType,   ///< [in] is a switch to select a fitness measure ( see \ref #GOODNESS_OF_FIT_FUNC)  
+                              size_t nSize,         ///< [in] is the number of observations in X.
+                              double mean,          ///< [in] is the model mean (i.e. mu).
+                              double sigma,         ///< [in] is the standard deviation of the model's residuals/innovations.
+                              WORD nIntegral,       ///< [in] is the non-seasonal difference order.
+                              double* phis,         ///< [in] are the coefficients's values of the non-seasonal AR component.
+                              size_t p,             ///< [in] is the order of the non-seasonal AR component.
+                              double* thetas,       ///< [in] are the coefficients's values of the non-seasonal MA component.
+                              size_t q,             ///< [in] is the order of the non-seasonal MA component.
+                              WORD nSIntegral,      ///< [in] is the seasonal difference.
+                              WORD nSPeriod,        ///< [in] is the number of observations per one period (e.g. 12=Annual, 4=Quarter).
+                              double* sPhis,        ///< [in] are the coefficients's values of the seasonal AR component.
+                              size_t sP,            ///< [in] is the order of the seasonal AR component.
+                              double* sThetas,      ///< [in] are the coefficients's values of the seasonal MA component.
+                              size_t sQ,            ///< [in] is the order of the seasonal MA component.
+                              GOODNESS_OF_FIT_FUNC retType,   ///< [in] is a switch to select a fitness measure ( see \ref #GOODNESS_OF_FIT_FUNC).
                               double* retVal        ///< [out] is the calculated goodness of fit value.
                               );
   /*! 
-  * \brief  Returns an array of cells for the initial (non-optimal), optimal or standard errors of the model's parameters.
+  * \brief  Returns the quick guess, optimal (calibrated) or std. errors of the values of model's parameters.
   * 
-  * \note 1. The time series is homogeneous or equally spaced
+  * \note 1. The time series is homogeneous or equally spaced.
   * \note 2. The time series may include missing values (e.g. NaN) at either end.
-  * \note 3. The residuals/innovations standard deviation (i.e.\f$\sigma\f$) should be greater than zero
+  * \note 3. The long-run mean argument (mean) can take any value or be omitted, in which case a zero value is assumed.
+  * \note 4. The residuals/innovations standard deviation (i.e.\f$\sigma\f$) should be greater than zero.
+  * \note 5. The non-seasonal integration order - d - is optional and can be omitted, in which case d is assumed to be zero.
+  * \note 6. The seasonal integration order - sD - is optional and can be omitted, in which case sD is assumed to be zero.
+  * \note 7. The season length - s - is optional and can be omitted, in which case s is assumed to be zero (i.e. plain ARIMA).
   *
   *   \return status code of the operation
-  *   \retval #NDK_SUCCESS Operation successful
+  *   \retval #NDK_SUCCESS operation successful
   *   \retval #NDK_FAILED operation is unsuccessful (see \ref SFMacros.h)
   *   \sa NDK_SARIMA_GOF(), NDK_SARIMA_RESID(), NDK_SARIMA_FORE(), NDK_SARIMA_FITTED(), NDK_SARIMA_VALIDATE()
   */
   int __stdcall NDK_SARIMA_PARAM( double* pData,    ///< [in] is the univariate time series data (a one dimensional array).
-                                  size_t nSize,     ///< [in] is the number of observations in X. 
-                                  double* mean,     ///< [inout] is the mean of the ARMA process
-                                  double* sigma,    ///< [inout] is the standard deviation of the model's residuals/innovations. 
-                                  WORD nIntegral,   ///< [in] is the non-seasonal difference order
-                                  double* phis,     ///< [inout] are the coefficients's values of the non-seasonal AR component  
-                                  size_t p,         ///< [in] is the order of the non-seasonal AR component
-                                  double* thetas,   ///< [inout] are the coefficients's values of the non-seasonal MA component
-                                  size_t q,         ///< [in] is the order of the non-seasonal MA component
-                                  WORD nSIntegral,  ///< [in] is the seasonal difference
-                                  WORD nSPeriod,    ///< [in] is the number of observations per one period (e.g. 12=Annual, 4=Quarter)
-                                  double* sPhis,    ///< [inout] are the coefficients's values of the seasonal AR component
-                                  size_t sP,        ///< [in] is the order of the seasonal AR component
-                                  double* sThetas,  ///< [inout] are the coefficients's values of the seasonal MA component 
-                                  size_t sQ,        ///< [in] is the order of the seasonal MA component
-                                  MODEL_RETVAL_FUNC retType,     ///< [in] is a switch to select the type of value returned: 1= Quick Guess, 2=Calibrated, 3= Std. Errors ( see \ref #MODEL_RETVAL_FUNC)
-                                  size_t maxIter    ///< [in] is the maximum number of iterations used to calibrate the model. If missing or less than 100, the default maximum of 100 is assumed. 
+                                  size_t nSize,     ///< [in] is the number of observations in X.
+                                  double* mean,     ///< [inout] is the mean of the ARMA process.
+                                  double* sigma,    ///< [inout] is the standard deviation of the model's residuals/innovations.
+                                  WORD nIntegral,   ///< [in] is the non-seasonal difference order.
+                                  double* phis,     ///< [inout] are the coefficients's values of the non-seasonal AR component.
+                                  size_t p,         ///< [in] is the order of the non-seasonal AR component.
+                                  double* thetas,   ///< [inout] are the coefficients's values of the non-seasonal MA component.
+                                  size_t q,         ///< [in] is the order of the non-seasonal MA component.
+                                  WORD nSIntegral,  ///< [in] is the seasonal difference.
+                                  WORD nSPeriod,    ///< [in] is the number of observations per one period (e.g. 12=Annual, 4=Quarter).
+                                  double* sPhis,    ///< [inout] are the coefficients's values of the seasonal AR component.
+                                  size_t sP,        ///< [in] is the order of the seasonal AR component.
+                                  double* sThetas,  ///< [inout] are the coefficients's values of the seasonal MA component.
+                                  size_t sQ,        ///< [in] is the order of the seasonal MA component.
+                                  MODEL_RETVAL_FUNC retType,     ///< [in] is a switch to select the type of value returned: 1= Quick Guess, 2=Calibrated, 3= Std. Errors ( see \ref #MODEL_RETVAL_FUNC).
+                                  size_t maxIter    ///< [in] is the maximum number of iterations used to calibrate the model. If missing or less than 100, the default maximum of 100 is assumed.
                                   );
 
 
   /*! 
-  * \brief  Returns an array of cells for the initial (non-optimal), optimal or standard errors of the model's parameters.
+  * \brief  Returns the initial (non-optimal), optimal or standard errors of the model's parameters.
   * 
-  * \note 1. The time series is homogeneous or equally spaced
-  * \note 2. The time series may include missing values (e.g. NaN) at either end.
-  * \note 3. The residuals/innovations standard deviation (i.e.\f$\sigma\f$) should be greater than zero
+  * \note 1. The time series is homogeneous or equally spaced.
+  * \note 2. SARIMA_SIM returns an array of one simulation path starting from the end of the input data.
+  * \note 3. The time series may include missing values (e.g. NaN) at either end.
+  * \note 4. The residuals/innovations standard deviation (i.e.\f$\sigma\f$) should be greater than zero.
+  * \note 5. The input data argument (i.e. latest observations) is optional. If omitted, an array of zeroes is assumed.
+  * \note 6. The long-run mean argument (mean) can take any value or be omitted, in which case a zero value is assumed.
+  * \note 7. The non-seasonal integration order - d - is optional and can be omitted, in which case d is assumed to be zero.
+  * \note 8. The seasonal integration order - sD - is optional and can be omitted, in which case sD is assumed to be zero.
+  * \note 9. The season length - s - is optional and can be omitted, in which case s is assumed to be zero (i.e. Plain ARIMA).
   *
   *   \return status code of the operation
-  *   \retval #NDK_SUCCESS Operation successful
+  *   \retval #NDK_SUCCESS operation successful
   *   \retval #NDK_FAILED operation is unsuccessful (see \ref SFMacros.h)
   *   \sa NDK_SARIMA_GOF(), NDK_SARIMA_RESID(), NDK_SARIMA_FORE(), NDK_SARIMA_FITTED(), NDK_SARIMA_VALIDATE()
   */
-  int __stdcall NDK_SARIMA_SIM( double mean,        ///< [in] is the model mean (i.e. mu). 
-                                double sigma,       ///< [in] is the standard deviation of the model's residuals/innovations. 
-                                WORD nIntegral,     ///< [in] is the non-seasonal difference order
-                                double* phis,       ///< [in] are the coefficients's values of the non-seasonal AR component  
-                                size_t p,           ///< [in] is the order of the non-seasonal AR component
-                                double* thetas,     ///< [in] are the coefficients's values of the non-seasonal MA component
-                                size_t q,           ///< [in] is the order of the non-seasonal MA component
-                                WORD nSIntegral,    ///< [in] is the seasonal difference
-                                WORD nSPeriod,      ///< [in] is the number of observations per one period (e.g. 12=Annual, 4=Quarter)
-                                double* sPhis,      ///< [in] are the coefficients's values of the seasonal AR component
-                                size_t sP,          ///< [in] is the order of the seasonal AR component
-                                double* sThetas,    ///< [in] are the coefficients's values of the seasonal MA component 
-                                size_t sQ,          ///< [in] is the order of the seasonal MA component
+  int __stdcall NDK_SARIMA_SIM( double mean,        ///< [in] is the model mean (i.e. mu).
+                                double sigma,       ///< [in] is the standard deviation of the model's residuals/innovations.
+                                WORD nIntegral,     ///< [in] is the non-seasonal difference order.
+                                double* phis,       ///< [in] are the coefficients's values of the non-seasonal AR component.
+                                size_t p,           ///< [in] is the order of the non-seasonal AR component.
+                                double* thetas,     ///< [in] are the coefficients's values of the non-seasonal MA component.
+                                size_t q,           ///< [in] is the order of the non-seasonal MA component.
+                                WORD nSIntegral,    ///< [in] is the seasonal difference.
+                                WORD nSPeriod,      ///< [in] is the number of observations per one period (e.g. 12=Annual, 4=Quarter).
+                                double* sPhis,      ///< [in] are the coefficients's values of the seasonal AR component.
+                                size_t sP,          ///< [in] is the order of the seasonal AR component.
+                                double* sThetas,    ///< [in] are the coefficients's values of the seasonal MA component.
+                                size_t sQ,          ///< [in] is the order of the seasonal MA component.
                                 double* pData,      ///< [in] is the univariate time series data (a one dimensional array).
-                                size_t nSize,       ///< [in] is the number of observations in X. 
-                                size_t nSeed,       ///< [in] is an unsigned integer for setting up the random number generators  
-                                double* retVal,     ///< [out] is the simulated value
-                                size_t nStep        ///< [in] is the simulation time/horizon (expressed in terms of steps beyond end of the time series).   
+                                size_t nSize,       ///< [in] is the number of observations in X.
+                                size_t nSeed,       ///< [in] is an unsigned integer for setting up the random number generators.
+                                double* retVal,     ///< [out] is the simulated value.
+                                size_t nStep        ///< [in] is the simulation time/horizon (expressed in terms of steps beyond end of the time series).
                                 );
     /*! 
-  * \brief   Calculates the out-of-sample forecast statistics.
+  * \brief   Calculates the out-of-sample conditional forecast (i.e. mean, error, and confidence interval).
   * 
-  * \note 1. The time series is homogeneous or equally spaced
+  * \note 1. The time series is homogeneous or equally spaced.
   * \note 2. The time series may include missing values (e.g. NaN) at either end.
-  * \note 3. The residuals/innovations standard deviation (i.e.\f$\sigma\f$) should be greater than zero
+  * \note 3. The long-run mean argument (mean) can take any value or be omitted, in which case a zero value is assumed.
+  * \note 4. The residuals/innovations standard deviation (i.e.\f$\sigma\f$) should be greater than zero.
+  * \note 5. The non-seasonal integration order - d - is optional and can be omitted, in which case d is assumed to be zero.
+  * \note 6. The seasonal integration order - sD - is optional and can be omitted, in which case sD is assumed to be zero.
+  * \note 7. The season length - s - is optional and can be omitted, in which case s is assumed to be zero (i.e. plain ARIMA). 
   *
   *   \return status code of the operation
-  *   \retval #NDK_SUCCESS Operation successful
+  *   \retval #NDK_SUCCESS operation successful
   *   \retval #NDK_FAILED operation is unsuccessful (see \ref SFMacros.h)
   *   \sa NDK_SARIMA_GOF(), NDK_SARIMA_RESID(), NDK_SARIMA_PARAM(), NDK_SARIMA_FITTED(), NDK_SARIMA_VALIDATE()
   */
   int __stdcall NDK_SARIMA_FORE(double* pData,        ///< [in] is the univariate time series data (a one dimensional array).
-                                size_t nSize,         ///< [in] is the number of observations in X. 
-                                double mean,          ///< [in] is the model mean (i.e. mu). 
-                                double sigma,         ///< [in] is the standard deviation of the model's residuals/innovations. 
-                                WORD nIntegral,       ///< [in] is the non-seasonal difference order
-                                double* phis,         ///< [in] are the coefficients's values of the non-seasonal AR component  
-                                size_t p,             ///< [in] is the order of the non-seasonal AR component
-                                double* thetas,       ///< [in] are the coefficients's values of the non-seasonal MA component
-                                size_t q,             ///< [in] is the order of the non-seasonal MA component
-                                WORD nSIntegral,      ///< [in] is the seasonal difference
-                                WORD nSPeriod,        ///< [in] is the number of observations per one period (e.g. 12=Annual, 4=Quarter)
-                                double* sPhis,        ///< [in] are the coefficients's values of the seasonal AR component
-                                size_t sP,            ///< [in] is the order of the seasonal AR component
-                                double* sThetas,      ///< [in] are the coefficients's values of the seasonal MA component 
-                                size_t sQ,            ///< [in] is the order of the seasonal MA component
-                                size_t nStep,         ///< [in] is the forecast time/horizon (expressed in terms of steps beyond end of the time series). 
-                                FORECAST_RETVAL_FUNC retType, ///< [in] is a switch to select the type of value returned (see \ref #FORECAST_RETVAL_FUNC)
-                                double  alpha,        ///< [in] is the statistical significance level. If missing, a default of 5% is assumed. 
-                                double* retVal        ///< [out] is the calculated forecast value
+                                size_t nSize,         ///< [in] is the number of observations in X.
+                                double mean,          ///< [in] is the model mean (i.e. mu).
+                                double sigma,         ///< [in] is the standard deviation of the model's residuals/innovations.
+                                WORD nIntegral,       ///< [in] is the non-seasonal difference order.
+                                double* phis,         ///< [in] are the coefficients's values of the non-seasonal AR component.
+                                size_t p,             ///< [in] is the order of the non-seasonal AR component.
+                                double* thetas,       ///< [in] are the coefficients's values of the non-seasonal MA component.
+                                size_t q,             ///< [in] is the order of the non-seasonal MA component.
+                                WORD nSIntegral,      ///< [in] is the seasonal difference.
+                                WORD nSPeriod,        ///< [in] is the number of observations per one period (e.g. 12=Annual, 4=Quarter).
+                                double* sPhis,        ///< [in] are the coefficients's values of the seasonal AR component.
+                                size_t sP,            ///< [in] is the order of the seasonal AR component.
+                                double* sThetas,      ///< [in] are the coefficients's values of the seasonal MA component.
+                                size_t sQ,            ///< [in] is the order of the seasonal MA component.
+                                size_t nStep,         ///< [in] is the forecast time/horizon (expressed in terms of steps beyond end of the time series).
+                                FORECAST_RETVAL_FUNC retType, ///< [in] is a switch to select the type of value returned (see \ref #FORECAST_RETVAL_FUNC).
+                                double  alpha,        ///< [in] is the statistical significance level. If missing, a default of 5% is assumed.
+                                double* retVal        ///< [out] is the calculated forecast value.
                                 );
   /*! 
-  * \brief   Returns an array of cells for the fitted values (i.e. mean, volatility and residuals)
+  * \brief   Returns the in-sample model fitted values of the conditional mean, volatility or residuals.
   * 
-  * \note 1. The time series is homogeneous or equally spaced
+  * \note 1. The time series is homogeneous or equally spaced.
   * \note 2. The time series may include missing values (e.g. NaN) at either end.
-  * \note 3. The residuals/innovations standard deviation (i.e.\f$\sigma\f$) should be greater than zero
+  * \note 3. The long-run mean argument (mean) can take any value or be omitted, in which case a zero value is assumed.
+  * \note 4. The residuals/innovations standard deviation (i.e.\f$\sigma\f$) should be greater than zero.
+  * \note 5. The non-seasonal integration order - d - is optional and can be omitted, in which case d is assumed to be zero.
+  * \note 6. The seasonal integration order - sD - is optional and can be omitted, in which case sD is assumed to be zero.
+  * \note 7. The season length - s - is optional and can be omitted, in which case s is assumed to be zero (i.e. plain ARIMA).
   *
   *   \return status code of the operation
-  *   \retval #NDK_SUCCESS Operation successful
+  *   \retval #NDK_SUCCESS operation successful
   *   \retval #NDK_FAILED operation is unsuccessful (see \ref SFMacros.h)
   *   \sa NDK_SARIMA_GOF(), NDK_SARIMA_RESID(), NDK_SARIMA_PARAM(), NDK_SARIMA_FORE(), NDK_SARIMA_VALIDATE()
   */
   int __stdcall NDK_SARIMA_FITTED(double* pData,        ///< [inout] is the univariate time series data (a one dimensional array).
-                                  size_t nSize,         ///< [in] is the number of observations in X. 
-                                  double mean,          ///< [in] is the model mean (i.e. mu). 
-                                  double sigma,         ///< [in] is the standard deviation of the model's residuals/innovations. 
-                                  WORD nIntegral,       ///< [in] is the non-seasonal difference order
-                                  double* phis,         ///< [in] are the coefficients's values of the non-seasonal AR component  
-                                  size_t p,             ///< [in] is the order of the non-seasonal AR component
-                                  double* thetas,       ///< [in] are the coefficients's values of the non-seasonal MA component
-                                  size_t q,             ///< [in] is the order of the non-seasonal MA component
-                                  WORD nSIntegral,      ///< [in] is the seasonal difference
-                                  WORD nSPeriod,        ///< [in] is the number of observations per one period (e.g. 12=Annual, 4=Quarter)
-                                  double* sPhis,        ///< [in] are the coefficients's values of the seasonal AR component
-                                  size_t sP,            ///< [in] is the order of the seasonal AR component
-                                  double* sThetas,      ///< [in] are the coefficients's values of the seasonal MA component 
-                                  size_t sQ,            ///< [in] is the order of the seasonal MA component
-                                  FIT_RETVAL_FUNC retType          ///< [in]  is a switch to select a output type ( see \ref #FIT_RETVAL_FUNC)
+                                  size_t nSize,         ///< [in] is the number of observations in X.
+                                  double mean,          ///< [in] is the model mean (i.e. mu).
+                                  double sigma,         ///< [in] is the standard deviation of the model's residuals/innovations.
+                                  WORD nIntegral,       ///< [in] is the non-seasonal difference order.
+                                  double* phis,         ///< [in] are the coefficients's values of the non-seasonal AR component.
+                                  size_t p,             ///< [in] is the order of the non-seasonal AR component.
+                                  double* thetas,       ///< [in] are the coefficients's values of the non-seasonal MA component.
+                                  size_t q,             ///< [in] is the order of the non-seasonal MA component.
+                                  WORD nSIntegral,      ///< [in] is the seasonal difference.
+                                  WORD nSPeriod,        ///< [in] is the number of observations per one period (e.g. 12=Annual, 4=Quarter).
+                                  double* sPhis,        ///< [in] are the coefficients's values of the seasonal AR component.
+                                  size_t sP,            ///< [in] is the order of the seasonal AR component.
+                                  double* sThetas,      ///< [in] are the coefficients's values of the seasonal MA component.
+                                  size_t sQ,            ///< [in] is the order of the seasonal MA component.
+                                  FIT_RETVAL_FUNC retType          ///< [in]  is a switch to select a output type ( see \ref #FIT_RETVAL_FUNC).
                                   );
   /*! 
-  * \brief   Examines the model's parameters for stability constraints (e.g. stationary, etc.). 
+  * \brief   Examines the model's parameters for stability constraints (e.g. stationarity, invertibility, causality, etc.).
   * 
-  * \note 1. The time series is homogeneous or equally spaced
+  * \note 1. The time series is homogeneous or equally spaced.
   * \note 2. The time series may include missing values (e.g. NaN) at either end.
-  * \note 3. The residuals/innovations standard deviation (i.e.\f$\sigma\f$) should be greater than zero
+  * \note 3. The residuals/innovations standard deviation (i.e.\f$\sigma\f$) should be greater than zero.
+  * \note 4. The long-run mean argument (mean) can take any value or be omitted, in which case a zero value is assumed.
+  * \note 5. The non-seasonal integration order - d - is optional and can be omitted, in which case d is assumed to be zero.
+  * \note 6. The seasonal integration order - sD - is optional and can be omitted, in which case sD is assumed to be zero.
+  * \note 7. The season length - s - is optional and can be omitted, in which case s is assumed to be zero (i.e. plain ARIMA).
   *
   *   \return status code of the operation
-  *   \retval #NDK_SUCCESS Operation successful
+  *   \retval #NDK_SUCCESS operation successful
   *   \retval #NDK_FAILED operation is unsuccessful (see \ref SFMacros.h)
   *   \sa NDK_SARIMA_GOF(), NDK_SARIMA_RESID(), NDK_SARIMA_PARAM(), NDK_SARIMA_FORE(), NDK_SARIMA_FITTED()
   */
-  int __stdcall NDK_SARIMA_VALIDATE(double mean,          ///< [in] is the model mean (i.e. mu). 
-                                    double sigma,         ///< [in] is the standard deviation of the model's residuals/innovations. 
-                                    WORD nIntegral,       ///< [in] is the non-seasonal difference order
-                                    double* phis,         ///< [in] are the coefficients's values of the non-seasonal AR component  
-                                    size_t p,             ///< [in] is the order of the non-seasonal AR component
-                                    double* thetas,       ///< [in] are the coefficients's values of the non-seasonal MA component
-                                    size_t q,             ///< [in] is the order of the non-seasonal MA component
-                                    WORD nSIntegral,      ///< [in] is the seasonal difference
-                                    WORD nSPeriod,        ///< [in] is the number of observations per one period (e.g. 12=Annual, 4=Quarter)
-                                    double* sPhis,        ///< [in] are the coefficients's values of the seasonal AR component
-                                    size_t sP,            ///< [in] is the order of the seasonal AR component
-                                    double* sThetas,      ///< [in] are the coefficients's values of the seasonal MA component 
-                                    size_t sQ             ///< [in] is the order of the seasonal MA component
+  int __stdcall NDK_SARIMA_VALIDATE(double mean,          ///< [in] is the model mean (i.e. mu).
+                                    double sigma,         ///< [in] is the standard deviation of the model's residuals/innovations.
+                                    WORD nIntegral,       ///< [in] is the non-seasonal difference order.
+                                    double* phis,         ///< [in] are the coefficients's values of the non-seasonal AR component.
+                                    size_t p,             ///< [in] is the order of the non-seasonal AR component.
+                                    double* thetas,       ///< [in] are the coefficients's values of the non-seasonal MA component.
+                                    size_t q,             ///< [in] is the order of the non-seasonal MA component.
+                                    WORD nSIntegral,      ///< [in] is the seasonal difference.
+                                    WORD nSPeriod,        ///< [in] is the number of observations per one period (e.g. 12=Annual, 4=Quarter).
+                                    double* sPhis,        ///< [in] are the coefficients's values of the seasonal AR component.
+                                    size_t sP,            ///< [in] is the order of the seasonal AR component.
+                                    double* sThetas,      ///< [in] are the coefficients's values of the seasonal MA component.
+                                    size_t sQ             ///< [in] is the order of the seasonal MA component.
                                     );
   ///@}
 
@@ -3043,167 +3206,181 @@ extern "C"
   /// @{
 
   /*! 
-  * \brief Computes the log-likelihood ((LLF), Akaike Information Criterion (AIC) or other goodness of fit function of the AirLine model.   
+  * \brief Computes the log-likelihood ((LLF), Akaike Information Criterion (AIC) or other goodness of fit functions of the AirLine model.
   * 
-  * \note 1. The airline model is a special, but often used, case of multiplicative ARIMA model. For a given seasonality length (s), the airline model is defined by four(4) parameters: \f$\mu\f$,\f$\sigma\f$,\f$\theta\f$ and \f$\Theta\f$).
-  *           \f$ (1-L^s)(1-L)Y_t = \mu + (1-\theta L)(1-\Theta L^s)a_t \f$
-  * \note 1. The time series is homogeneous or equally spaced
+  * \note 1. The Airline model is a special case of multiplicative seasonal ARIMA model, and it assumes independent and normally distributed residuals with constant variance.
+  * \note 1. The time series is homogeneous or equally spaced.
   * \note 2. The time series may include missing values (e.g. NaN) at either end.
-  * \note 3. The residuals/innovations standard deviation (i.e.\f$\sigma\f$) should be greater than zero
+  * \note 3. The residuals/innovations standard deviation (i.e.\f$\sigma\f$) should be greater than zero.
   *
   *   \return status code of the operation
-  *   \retval #NDK_SUCCESS Operation successful
+  *   \retval #NDK_SUCCESS operation successful
   *   \retval #NDK_FAILED operation is unsuccessful (see \ref SFMacros.h)
   *   \sa NDK_AIRLINE_RESID(), NDK_AIRLINE_PARAM(), NDK_AIRLINE_FORE(), NDK_AIRLINE_FITTED(), NDK_AIRLINE_VALIDATE()
   */
   int __stdcall NDK_AIRLINE_GOF(double* pData,    ///< [in] is the univariate time series data (a one dimensional array).
-                                size_t nSize,     ///< [in] is the number of observations in X. 
-                                double mean,      ///< [in] is the model mean (i.e. \f$\mu\f$). 
-                                double sigma,     ///< [in] is the standard deviation (\f$\sigma\f$) of the model's residuals/innovations. 
-                                WORD    S,        ///< [in] is the length of seasonality (expressed in terms of lags, where s > 1). 
-                                double  theta,    ///< [in] is the coefficient of first-lagged innovation (\f$\theta\f$)(see model description). 
-                                double  theta2,   ///< [in] is the coefficient of s-lagged innovation (\f$\Theta\f$) (see model description). 
-                                GOODNESS_OF_FIT_FUNC retType,     ///< [in] is a switch to select a fitness measure ( see \ref #GOODNESS_OF_FIT_FUNC)
+                                size_t nSize,     ///< [in] is the number of observations in X.
+                                double mean,      ///< [in] is the model mean (i.e. \f$\mu\f$).
+                                double sigma,     ///< [in] is the standard deviation (\f$\sigma\f$) of the model's residuals/innovations.
+                                WORD    S,        ///< [in] is the length of seasonality (expressed in terms of lags, where s > 1).
+                                double  theta,    ///< [in] is the coefficient of first-lagged innovation (\f$\theta\f$)(see model description).
+                                double  theta2,   ///< [in] is the coefficient of s-lagged innovation (\f$\Theta\f$) (see model description).
+                                GOODNESS_OF_FIT_FUNC retType,     ///< [in] is a switch to select a fitness measure ( see \ref #GOODNESS_OF_FIT_FUNC).
                                 double* retVal    ///< [out] is the calculated value of the goodness of fit.
                                 );
 
   /*! 
-  * \brief  Returns an array of cells for the standardized residuals of a given AirLine model    
+  * \brief  Returns an array of cells for the standardized residuals of a given AirLine model.
   * 
-  * \note 1. The time series is homogeneous or equally spaced
+  * \note 1. The time series is homogeneous or equally spaced.
   * \note 2. The time series may include missing values (e.g. NaN) at either end.
-  * \note 3. The residuals/innovations standard deviation (i.e.\f$\sigma\f$) should be greater than zero
+  * \note 3. The residuals/innovations standard deviation (i.e.\f$\sigma\f$) should be greater than zero.
   *
   *   \return status code of the operation
-  *   \retval #NDK_SUCCESS Operation successful
+  *   \retval #NDK_SUCCESS operation successful
   *   \retval #NDK_FAILED operation is unsuccessful (see \ref SFMacros.h)
   *   \deprecated this function is being replaced by NDK_AIRLINE_FITTED()
   *   \sa NDK_AIRLINE_GOF(), NDK_AIRLINE_PARAM(), NDK_AIRLINE_FORE(), NDK_AIRLINE_FITTED(), NDK_AIRLINE_VALIDATE()
   */
   int __stdcall NDK_AIRLINE_RESID(  double* pData,    ///< [inout] is the univariate time series data (a one dimensional array).
-                                    size_t nSize,     ///< [in] is the number of observations in X. 
-                                    double mean,      ///< [in] is the model mean (i.e. mu). 
-                                    double sigma,     ///< [in] is the standard deviation of the model's residuals/innovations. 
-                                    WORD    S,        ///< [in] is the length of seasonality (expressed in terms of lags, where s > 1). 
-                                    double  theta,    ///< [in] is the coefficient of first-lagged innovation (see model description). 
-                                    double  theta2,   ///< [in] is the coefficient of s-lagged innovation (see model description). 
-                                    RESID_RETVAL_FUNC retType      ///< [in] is a switch to select a residuals-type:raw or standardized. see \ref #RESID_RETVAL_FUNC
+                                    size_t nSize,     ///< [in] is the number of observations in X.
+                                    double mean,      ///< [in] is the model mean (i.e. mu).
+                                    double sigma,     ///< [in] is the standard deviation of the model's residuals/innovations.
+                                    WORD    S,        ///< [in] is the length of seasonality (expressed in terms of lags, where s > 1).
+                                    double  theta,    ///< [in] is the coefficient of first-lagged innovation (see model description).
+                                    double  theta2,   ///< [in] is the coefficient of s-lagged innovation (see model description).
+                                    RESID_RETVAL_FUNC retType      ///< [in] is a switch to select a residuals-type:raw or standardized. see \ref #RESID_RETVAL_FUNC.
                                    );
 
 
   /*! 
-  * \brief  Returns an array of cells for the initial (non-optimal), optimal or standard errors of the model's parameters.
+  * \brief  Returns the initial/quick guess of the model's parameters.
   * 
-  * \note 1. The time series is homogeneous or equally spaced
+  * \note 1. The time series is homogeneous or equally spaced.
   * \note 2. The time series may include missing values (e.g. NaN) at either end.
-  * \note 3. The residuals/innovations standard deviation (i.e.\f$\sigma\f$) should be greater than zero
+  * \note 3. The residuals/innovations standard deviation (i.e.\f$\sigma\f$) should be greater than zero.
   *
   *   \return status code of the operation
-  *   \retval #NDK_SUCCESS Operation successful
+  *   \retval #NDK_SUCCESS operation successful
   *   \retval #NDK_FAILED operation is unsuccessful (see \ref SFMacros.h)
   *   \sa NDK_AIRLINE_GOF(), NDK_AIRLINE_RESID(), NDK_AIRLINE_FORE(), NDK_AIRLINE_FITTED(), NDK_AIRLINE_VALIDATE()
   */
   int __stdcall NDK_AIRLINE_PARAM(  double* pData,    ///< [inout] is the univariate time series data (a one dimensional array).
-                                    size_t nSize,     ///< [in] is the number of observations in X. 
-                                    double* mean,     ///< [inout] is the model mean (i.e. mu). 
-                                    double* sigma,    ///< [inout] is the standard deviation of the model's residuals/innovations. 
-                                    WORD    S,        ///< [in] is the length of seasonality (expressed in terms of lags, where s > 1). 
-                                    double*  theta,   ///< [inout] is the coefficient of first-lagged innovation (see model description). 
-                                    double*  theta2,  ///< [inout] is the coefficient of s-lagged innovation (see model description
-                                    MODEL_RETVAL_FUNC retType,     ///< [in] is a switch to select the type of value returned: 1= Quick Guess, 2=Calibrated, 3= Std. Errors ( see \ref #MODEL_RETVAL_FUNC)
+                                    size_t nSize,     ///< [in] is the number of observations in X.
+                                    double* mean,     ///< [inout] is the model mean (i.e. mu).
+                                    double* sigma,    ///< [inout] is the standard deviation of the model's residuals/innovations.
+                                    WORD    S,        ///< [in] is the length of seasonality (expressed in terms of lags, where s > 1).
+                                    double*  theta,   ///< [inout] is the coefficient of first-lagged innovation (see model description).
+                                    double*  theta2,  ///< [inout] is the coefficient of s-lagged innovation (see model description.
+                                    MODEL_RETVAL_FUNC retType,     ///< [in] is a switch to select the type of value returned: 1= Quick Guess, 2=Calibrated, 3= Std. Errors ( see \ref #MODEL_RETVAL_FUNC).
                                     size_t maxIter    ///< [in] is the maximum number of iterations used to calibrate the model. If missing or less than 100, the default maximum of 100 is assumed. 
                                     );
 
   /*! 
   * \brief   Calculates the out-of-sample forecast statistics.
   * 
-  * \note 1. The time series is homogeneous or equally spaced
+  * \note 1. The time series is homogeneous or equally spaced.
   * \note 2. The time series may include missing values (e.g. NaN) at either end.
-  * \note 3. The residuals/innovations standard deviation (i.e.\f$\sigma\f$) should be greater than zero
+  * \note 3. The long-run mean argument (mean) can take any value or be omitted, in which case a zero value is assumed.
+  * \note 4. The residuals/innovations standard deviation (i.e.\f$\sigma\f$) should be greater than zero.
+  * \note 5. The season length must be greater than one.
+  * \note 6. The input argument for the non-seasonal MA parameter - theta - is optional and can be omitted, in which case no non-seasonal MA component is included.
+  * \note 7. The input argument for the seasonal MA parameter - theta2 - is optional and can be omitted, in which case no seasonal MA component is included.
   *
   *   \return status code of the operation
-  *   \retval #NDK_SUCCESS Operation successful
+  *   \retval #NDK_SUCCESS operation successful
   *   \retval #NDK_FAILED operation is unsuccessful (see \ref SFMacros.h)
   *   \sa NDK_AIRLINE_GOF(), NDK_AIRLINE_RESID(), NDK_AIRLINE_PARAM(), NDK_AIRLINE_FITTED(), NDK_AIRLINE_VALIDATE()
   */
   int __stdcall NDK_AIRLINE_FORE( double* pData,    ///< [in] is the univariate time series data (a one dimensional array).
-                                  size_t nSize,     ///< [in] is the number of observations in X. 
-                                  double mean,      ///< [in] is the model mean (i.e. mu). 
-                                  double sigma,     ///< [in] is the standard deviation of the model's residuals/innovations. 
-                                  WORD    S,        ///< [in] is the length of seasonality (expressed in terms of lags, where s > 1). 
-                                  double  theta,    ///< [in] is the coefficient of first-lagged innovation (see model description). 
-                                  double  theta2,   ///< [in] is the coefficient of s-lagged innovation (see model description). 
-                                  size_t nStep,     ///< [in] is the forecast time/horizon (expressed in terms of steps beyond end of the time series). 
-                                  FORECAST_RETVAL_FUNC retType,     ///< [in] is a switch to select the type of value returned  (see \ref #FORECAST_RETVAL_FUNC)
-                                  double  alpha,    ///< [in] is the statistical significance level. If missing, a default of 5% is assumed. 
-                                  double* retVal    ///< [out] is the calculated forecast value
+                                  size_t nSize,     ///< [in] is the number of observations in X.
+                                  double mean,      ///< [in] is the model mean (i.e. mu).
+                                  double sigma,     ///< [in] is the standard deviation of the model's residuals/innovations.
+                                  WORD    S,        ///< [in] is the length of seasonality (expressed in terms of lags, where s > 1).
+                                  double  theta,    ///< [in] is the coefficient of first-lagged innovation (see model description).
+                                  double  theta2,   ///< [in] is the coefficient of s-lagged innovation (see model description).
+                                  size_t nStep,     ///< [in] is the forecast time/horizon (expressed in terms of steps beyond end of the time series).
+                                  FORECAST_RETVAL_FUNC retType,     ///< [in] is a switch to select the type of value returned  (see \ref #FORECAST_RETVAL_FUNC).
+                                  double  alpha,    ///< [in] is the statistical significance level. If missing, a default of 5% is assumed.
+                                  double* retVal    ///< [out] is the calculated forecast value.
                                   );
 
   /*! 
-  * \brief Returns an array of cells for the simulated values 
+  * \brief Calculates the out-of-sample conditional mean forecast.
   * 
-  * \note 1. The time series is homogeneous or equally spaced
-  * \note 2. The time series may include missing values (e.g. NaN) at either end.
-  * \note 3. The \f$\epsilon\f$ are normally distributed with mean zero and unit standard deviation.
+  * \note 1. The time series is homogeneous or equally spaced.
+  * \note 2. The input data argument (i.e. latest observations) is optional. If omitted, a value of zero is assumed.
+  * \note 3. The time series may include missing values (e.g. NaN) at either end.
+  * \note 4. The \f$\epsilon\f$ are normally distributed with mean zero and unit standard deviation.
+  * \note 5. The long-run mean argument (mean) can take any value or be omitted, in which case a zero value is assumed.
+  * \note 6. The value of the residuals/innovations standard deviation (sigma) must be positive.
+  * \note 7. The season length must be greater than one.
+  * \note 8. The input argument for the non-seasonal MA parameter - theta - is optional and can be omitted, in which case no non-seasonal MA component is included.
+  * \note 9. The input argument for the seasonal MA parameter - theta2 - is optional and can be omitted, in which case no seasonal MA component is included. 
   *
   *   \return status code of the operation
-  *   \retval #NDK_SUCCESS Operation successful
+  *   \retval #NDK_SUCCESS operation successful
   *   \retval #NDK_FAILED operation is unsuccessful (see \ref SFMacros.h)
   *   \sa NDK_AIRLINE_VALIDATE(), NDK_AIRLINE_GOF(), NDK_AIRLINE_FORE(), NDK_AIRLINE_FITTED(), NDK_AIRLINE_PARAM()
   */
   int __stdcall NDK_AIRLINE_SIM(  double* pData,    ///< [in] is a univariate time series of the initial values (a one dimensional array).
-                                  size_t nSize,     ///< [in] is the number of observations in X. 
-                                  double mean,      ///< [in] is the model mean (i.e. mu). 
-                                  double sigma,     ///< [in] is the standard deviation of the model's residuals/innovations. 
-                                  WORD    S,        ///< [in] is the length of seasonality (expressed in terms of lags, where s > 1). 
-                                  double  theta,    ///< [in] is the coefficient of first-lagged innovation (see model description). 
-                                  double  theta2,   ///< [in] is the coefficient of s-lagged innovation (see model description). 
-                                  UINT nSeed,       ///< [in] is an unsigned integer for setting up the random number generators
-                                  double* retArray,   ///< [out] is the calculated simulation value
-                                  size_t nSteps     ///< [in] is the number of future steps to simulate for.  
+                                  size_t nSize,     ///< [in] is the number of observations in X.
+                                  double mean,      ///< [in] is the model mean (i.e. mu).
+                                  double sigma,     ///< [in] is the standard deviation of the model's residuals/innovations.
+                                  WORD    S,        ///< [in] is the length of seasonality (expressed in terms of lags, where s > 1).
+                                  double  theta,    ///< [in] is the coefficient of first-lagged innovation (see model description).
+                                  double  theta2,   ///< [in] is the coefficient of s-lagged innovation (see model description).
+                                  UINT nSeed,       ///< [in] is an unsigned integer for setting up the random number generators.
+                                  double* retArray,   ///< [out] is the calculated simulation value.
+                                  size_t nSteps     ///< [in] is the number of future steps to simulate for.
                                   );
 
 
 
   /*! 
-  * \brief   Returns an array of cells for the fitted values (i.e. mean, volatility and residuals)
+  * \brief   Returns the fitted values of the conditional mean.
   * 
-  * \note 1. The time series is homogeneous or equally spaced
+  * \note 1. The time series is homogeneous or equally spaced.
   * \note 2. The time series may include missing values (e.g. NaN) at either end.
-  * \note 3. The residuals/innovations standard deviation (i.e.\f$\sigma\f$) should be greater than zero
+  * \note 3. The long-run mean argument (mean) can take any value or be omitted, in which case a zero value is assumed.
+  * \note 4. The season length must be greater than one.
+  * \note 5. The residuals/innovations standard deviation (i.e.\f$\sigma\f$) should be greater than zero.
+  * \note 6. The input argument for the non-seasonal MA parameter - theta - is optional and can be omitted, in which case no non-seasonal MA component is included.
+  * \note 7. The input argument for the seasonal MA parameter - theta2 - is optional and can be omitted, in which case no seasonal MA component is included.
   *
   *   \return status code of the operation
-  *   \retval #NDK_SUCCESS Operation successful
+  *   \retval #NDK_SUCCESS operation successful
   *   \retval #NDK_FAILED operation is unsuccessful (see \ref SFMacros.h)
   *   \sa NDK_AIRLINE_GOF(), NDK_AIRLINE_RESID(), NDK_AIRLINE_PARAM(), NDK_AIRLINE_FORE(), NDK_AIRLINE_VALIDATE()
   */
   int __stdcall NDK_AIRLINE_FITTED( double* pData,    ///< [in] is the univariate time series data (a one dimensional array).
-                                    size_t nSize,     ///< [in] is the number of observations in X. 
-                                    double mean,      ///< [in] is the model mean (i.e. mu). 
-                                    double sigma,     ///< [in] is the standard deviation of the model's residuals/innovations. 
-                                    WORD    S,        ///< [in] is the length of seasonality (expressed in terms of lags, where s > 1). 
-                                    double  theta,    ///< [in] is the coefficient of first-lagged innovation (see model description). 
-                                    double  theta2,   ///< [in] is the coefficient of s-lagged innovation (see model description). 
-                                     	FIT_RETVAL_FUNC retType      ///< [in]  is a switch to select a output type ( see \ref #FIT_RETVAL_FUNC)
+                                    size_t nSize,     ///< [in] is the number of observations in X.
+                                    double mean,      ///< [in] is the model mean (i.e. mu).
+                                    double sigma,     ///< [in] is the standard deviation of the model's residuals/innovations.
+                                    WORD    S,        ///< [in] is the length of seasonality (expressed in terms of lags, where s > 1).
+                                    double  theta,    ///< [in] is the coefficient of first-lagged innovation (see model description).
+                                    double  theta2,   ///< [in] is the coefficient of s-lagged innovation (see model description).
+                                    FIT_RETVAL_FUNC retType      ///< [in]  is a switch to select a output type ( see \ref #FIT_RETVAL_FUNC).
                                     );
 
   /*! 
-  * \brief   Examines the model's parameters for stability constraints (e.g. stationary, etc.). 
+  * \brief   Examines the model's parameters for stability constraints (e.g. stationarity, etc.).
   * 
-  * \note 1. The time series is homogeneous or equally spaced
-  * \note 2. The time series may include missing values (e.g. NaN) at either end.
-  * \note 3. The residuals/innovations standard deviation (i.e.\f$\sigma\f$) should be greater than zero
+  * \note 1. The Airline model is a special case of multiplicative seasonal ARIMA model, and it assumes independent and normally distributed residuals with constant variance.
+  * \note 2. The time series is homogeneous or equally spaced.
+  * \note 3. The time series may include missing values (e.g. NaN) at either end.
+  * \note 4. The residuals/innovations standard deviation (i.e.\f$\sigma\f$) should be greater than zero.
   *
   *   \return status code of the operation
-  *   \retval #NDK_SUCCESS Operation successful
+  *   \retval #NDK_SUCCESS operation successful
   *   \retval #NDK_FAILED operation is unsuccessful (see \ref SFMacros.h)
   *   \sa NDK_AIRLINE_GOF(), NDK_AIRLINE_RESID(), NDK_AIRLINE_PARAM(), NDK_AIRLINE_FORE(), NDK_AIRLINE_FITTED()
   */
-  int __stdcall NDK_AIRLINE_VALIDATE( double mean,      ///< [in] is the model mean (i.e. mu). 
-                                      double sigma,     ///< [in] is the standard deviation of the model's residuals/innovations. 
-                                      WORD    S,        ///< [in] is the length of seasonality (expressed in terms of lags, where s > 1). 
-                                      double  theta,    ///< [in] is the coefficient of first-lagged innovation (see model description). 
-                                      double  theta2    ///< [in] is the coefficient of s-lagged innovation (see model description). 
+  int __stdcall NDK_AIRLINE_VALIDATE( double mean,      ///< [in] is the model mean (i.e. mu).
+                                      double sigma,     ///< [in] is the standard deviation of the model's residuals/innovations.
+                                      WORD    S,        ///< [in] is the length of seasonality (expressed in terms of lags, where s > 1).
+                                      double  theta,    ///< [in] is the coefficient of first-lagged innovation (see model description).
+                                      double  theta2    ///< [in] is the coefficient of s-lagged innovation (see model description).
                                         );
   ///@}
 
@@ -3241,7 +3418,7 @@ extern "C"
   *   \retval #NDK_FAILED operation is unsuccessful (see \ref SFMacros.h)
   *   \sa NDK_X12_ENV_INIT(), NDK_X12_ENV_CLEANUP(), NDK_X12_SCEN_CLEAUP(), NDK_X12_DATA_FILE(), NDK_X12_SPC_FILE(), NDK_X12_RUN_BATCH(), NDK_X12_RUN_SCENARIO(), NDK_X12_RUN_STAT(), NDK_X12_OUT_FILE(), NDK_X12_OUT_SERIES(), NDK_X12_FORE_SERIES()
   */
-  int __stdcall NDK_X12_SCEN_INIT(LPCSTR szScenarioName,    ///< [in] is the scenario name, must be unique
+  int __stdcall NDK_X12_SCEN_INIT(LPCTSTR szScenarioName,    ///< [in] is the scenario name, must be unique
                                   LPVOID X12Options         ///< [in] (optional) is an instance of #X12ARIMA_OPTIONS structure with all X12 model options.
                                   );
   /*! 
@@ -3252,7 +3429,7 @@ extern "C"
   *   \retval #NDK_FAILED operation is unsuccessful (see \ref SFMacros.h)
   *   \sa NDK_X12_ENV_INIT(), NDK_X12_ENV_CLEANUP(), NDK_X12_SCEN_INIT(), NDK_X12_DATA_FILE(), NDK_X12_SPC_FILE(), NDK_X12_RUN_BATCH(), NDK_X12_RUN_SCENARIO(), NDK_X12_RUN_STAT(), NDK_X12_OUT_FILE(), NDK_X12_OUT_SERIES(), NDK_X12_FORE_SERIES()
   */
-  int __stdcall NDK_X12_SCEN_CLEAUP(LPCSTR szScenarioName /*!< [in] is the scenario name or the model unique identifier */);
+  int __stdcall NDK_X12_SCEN_CLEAUP(LPCTSTR szScenarioName /*!< [in] is the scenario name or the model unique identifier */);
 
 
   /*! 
@@ -3263,7 +3440,7 @@ extern "C"
   *   \retval #NDK_FAILED operation is unsuccessful (see \ref SFMacros.h)
   *   \sa NDK_X12_ENV_INIT(), NDK_X12_ENV_CLEANUP(), NDK_X12_SCEN_INIT(), NDK_X12_SCEN_CLEAUP(), NDK_X12_SPC_FILE(), NDK_X12_RUN_BATCH(), NDK_X12_RUN_SCENARIO(), NDK_X12_RUN_STAT(), NDK_X12_OUT_FILE(), NDK_X12_OUT_SERIES(), NDK_X12_FORE_SERIES()
   */
-  int __stdcall NDK_X12_DATA_FILE(  LPCSTR szScenarioName, 
+  int __stdcall NDK_X12_DATA_FILE(  LPCTSTR szScenarioName, 
                                     double* X,            ///< [in] is the univariate time series data (a one dimensional array).
                                     size_t nLen,          ///< [in] is the number of observations in X
                                     BOOL monthly,         ///< [in] is a boolean flag for whether the data is monthly/quartelry sampled.
@@ -3278,7 +3455,7 @@ extern "C"
   *   \retval #NDK_FAILED operation is unsuccessful (see \ref SFMacros.h)
   *   \sa NDK_X12_ENV_INIT(), NDK_X12_ENV_CLEANUP(), NDK_X12_SCEN_INIT(), NDK_X12_SCEN_CLEAUP(), NDK_X12_DATA_FILE(), NDK_X12_RUN_BATCH(), NDK_X12_RUN_SCENARIO(), NDK_X12_RUN_STAT(), NDK_X12_OUT_FILE(), NDK_X12_OUT_SERIES(), NDK_X12_FORE_SERIES()
   */
-  int __stdcall NDK_X12_SPC_FILE(LPCSTR szScenarioName, LPVOID X12Options);
+  int __stdcall NDK_X12_SPC_FILE(LPCTSTR szScenarioName, LPVOID X12Options);
 
   /*! 
   * \brief   Run a batch file in x12a environment
@@ -3288,7 +3465,7 @@ extern "C"
   *   \retval #NDK_FAILED operation is unsuccessful (see \ref SFMacros.h)
   *   \sa NDK_X12_ENV_INIT(), NDK_X12_ENV_CLEANUP(), NDK_X12_SCEN_INIT(), NDK_X12_SCEN_CLEAUP(), NDK_X12_DATA_FILE(), NDK_X12_SPC_FILE(), NDK_X12_RUN_SCENARIO(), NDK_X12_RUN_STAT(), NDK_X12_OUT_FILE(), NDK_X12_OUT_SERIES(), NDK_X12_FORE_SERIES()
   */
-  int __stdcall NDK_X12_RUN_BATCH(LPCSTR szScenarioName, LPCSTR szBatchFile, LPWORD status);
+  int __stdcall NDK_X12_RUN_BATCH(LPCTSTR szScenarioName, LPCTSTR szBatchFile, LPWORD status);
 
   /*! 
   * \brief   Run a x12a program for the given model or scenrio
@@ -3298,7 +3475,7 @@ extern "C"
   *   \retval #NDK_FAILED operation is unsuccessful (see \ref SFMacros.h)
   *   \sa NDK_X12_ENV_INIT(), NDK_X12_ENV_CLEANUP(), NDK_X12_SCEN_INIT(), NDK_X12_SCEN_CLEAUP(), NDK_X12_DATA_FILE(), NDK_X12_SPC_FILE(), NDK_X12_RUN_BATCH(), NDK_X12_RUN_STAT(), NDK_X12_OUT_FILE(), NDK_X12_OUT_SERIES(), NDK_X12_FORE_SERIES()
   */
-  int __stdcall NDK_X12_RUN_SCENARIO(LPCSTR szScenarioName, LPWORD status);
+  int __stdcall NDK_X12_RUN_SCENARIO(LPCTSTR szScenarioName, LPWORD status);
 
   /*! 
   * \brief   Read the status file generated by x12a program
@@ -3308,7 +3485,7 @@ extern "C"
   *   \retval #NDK_FAILED operation is unsuccessful (see \ref SFMacros.h)
   *   \sa NDK_X12_ENV_INIT(), NDK_X12_ENV_CLEANUP(), NDK_X12_SCEN_INIT(), NDK_X12_SCEN_CLEAUP(), NDK_X12_DATA_FILE(), NDK_X12_SPC_FILE(), NDK_X12_RUN_BATCH(), NDK_X12_RUN_SCENARIO(), NDK_X12_OUT_FILE(), NDK_X12_OUT_SERIES(), NDK_X12_FORE_SERIES()
   */
-  int __stdcall NDK_X12_RUN_STAT(LPCSTR szScenarioName, LPWORD status, LPSTR szMsg, size_t* nLen);
+  int __stdcall NDK_X12_RUN_STAT(LPCTSTR szScenarioName, LPWORD status, LPTSTR szMsg, size_t* nLen);
 
   /*! 
   * \brief   Return the full path of the output file generated by x12a program
@@ -3318,13 +3495,13 @@ extern "C"
   *   \retval #NDK_FAILED operation is unsuccessful (see \ref SFMacros.h)
   *   \sa NDK_X12_ENV_INIT(), NDK_X12_ENV_CLEANUP(), NDK_X12_SCEN_INIT(), NDK_X12_SCEN_CLEAUP(), NDK_X12_DATA_FILE(), NDK_X12_SPC_FILE(), NDK_X12_RUN_BATCH(), NDK_X12_RUN_SCENARIO(), NDK_X12_RUN_STAT(), NDK_X12_OUT_SERIES(), NDK_X12_FORE_SERIES()
   */
-  int __stdcall NDK_X12_OUT_FILE(LPCSTR szScenarioName,       ///< [in] is the scenaio.model name
+  int __stdcall NDK_X12_OUT_FILE(LPCTSTR szScenarioName,       ///< [in] is the scenaio.model name
                                         WORD retType,         ///< [in] is a switch to designate the desired specific output file.
                                                               ///       0. The X12 specification file (*.spc)
                                                               ///       1. The X12 log file
                                                               ///       2. The output file
                                                               ///       3. The error file
-                                        LPSTR szOutFile,      ///< [out] is a buffer to hold the return full path
+                                        LPTSTR szOutFile,      ///< [out] is a buffer to hold the return full path
                                         size_t* nLen,         ///< [inout] is the length of the szOutFile. Upon return, this argument stores the actual number of bytes used.
                                         BOOL OpenFileFlag     ///< [in] is a switch to instruct the functiona whether it should open the file using system default editor (e.g. notepad)
                                         );
@@ -3336,7 +3513,7 @@ extern "C"
   *   \retval #NDK_FAILED operation is unsuccessful (see \ref SFMacros.h)
   *   \sa NDK_X12_ENV_INIT(), NDK_X12_ENV_CLEANUP(), NDK_X12_SCEN_INIT(), NDK_X12_SCEN_CLEAUP(), NDK_X12_DATA_FILE(), NDK_X12_SPC_FILE(), NDK_X12_RUN_BATCH(), NDK_X12_RUN_SCENARIO(), NDK_X12_RUN_STAT(), NDK_X12_OUT_FILE(), NDK_X12_FORE_SERIES()
   */
-  int __stdcall NDK_X12_OUT_SERIES(LPCSTR szScenarioName,   ///< [in] is the given scenario/model
+  int __stdcall NDK_X12_OUT_SERIES(LPCTSTR szScenarioName,   ///< [in] is the given scenario/model
                                     WORD nComponent,        ///< [in] is the desired output of the X12a output
                                                             /// 1. Final seasonal factors (d11)
                                                             /// 2. final trend-cycle (d12)
@@ -3356,7 +3533,7 @@ extern "C"
   *   \retval #NDK_FAILED operation is unsuccessful (see \ref SFMacros.h)
   *   \sa NDK_X12_ENV_INIT(), NDK_X12_ENV_CLEANUP(), NDK_X12_SCEN_INIT(), NDK_X12_SCEN_CLEAUP(), NDK_X12_DATA_FILE(), NDK_X12_SPC_FILE(), NDK_X12_RUN_BATCH(), NDK_X12_RUN_SCENARIO(), NDK_X12_RUN_STAT(), NDK_X12_OUT_FILE(), NDK_X12_OUT_SERIES()
   */
-  int __stdcall NDK_X12_FORE_SERIES(  LPCSTR szScenarioName,    ///< [in] is the given X12-ARIMA scenario/model identifier
+  int __stdcall NDK_X12_FORE_SERIES(  LPCTSTR szScenarioName,    ///< [in] is the given X12-ARIMA scenario/model identifier
                                       size_t nStep,             ///< [in] is the forecast horizon
                                       WORD retType,             ///< [in] is the switch to designate desired output
                                                                 ///   1. Mean
@@ -3367,213 +3544,392 @@ extern "C"
   ///@}
 
 
-    /// \name SARIMAX
+  /// \name X13ARIMA-SEATS
+  /// X13ARIMA-SEATS model functions
+  /// @{
+
+  /*!
+  * \brief   Initialize the filesystem environment on the local machine for the current user
+  *
+  * \note 1. This function creates a subfolder under the current user local profile for X13ARIMA models, and copy all the scripts needed to run the x13as program.
+  *
+  *   \return status code of the operation
+  *   \retval #NDK_SUCCESS Operation successful
+  *   \retval #NDK_FAILED operation is unsuccessful (see \ref SFMacros.h)
+  *   \sa NDK_X13_ENV_CLEANUP()
+  */
+  int __stdcall NDK_X13_ENV_INIT(BOOL   override    ///< [in] is a boolean flag to wipe our existing files and copy new ones.
+    );
+
+  /*!
+  * \brief   Finalize the X13AS environment and release any resources allocated
+  *
+  *   \return status code of the operation
+  *   \retval #NDK_SUCCESS Operation successful
+  *   \retval #NDK_FAILED operation is unsuccessful (see \ref SFMacros.h)
+  *   \sa NDK_X13_ENV_INIT()
+  */
+  int __stdcall NDK_X13_ENV_CLEANUP(void);
+
+  /*!
+  * \brief   Initialize the required files for the given scenario/model
+  *
+  *   \return status code of the operation
+  *   \retval #NDK_SUCCESS Operation successful
+  *   \retval #NDK_FAILED operation is unsuccessful (see \ref SFMacros.h)
+  *   \sa NDK_X13_ENV_INIT(), NDK_X13_ENV_CLEANUP(), NDK_X13_SCEN_CLEAUP()
+  */
+  int __stdcall NDK_X13_SCEN_INIT(LPCTSTR szScenarioName,     ///< [in] is the scenario name, must be unique
+                                  LPVOID X13Options           ///< [in] (optional) is an instance of #X13ARIMA_OPTIONS structure with all X13 model options.
+                                  );
+
+
+  /*!
+  * \brief   reconstruct the different (input/intermediate/output) files
+  *
+  *   \return status code of the operation
+  *   \retval #NDK_SUCCESS Operation successful
+  *   \retval #NDK_FAILED operation is unsuccessful (see \ref SFMacros.h)
+  *   \sa NDK_X13_ENV_INIT(), NDK_X13_ENV_CLEANUP(), NDK_X13_SCEN_CLEAUP()
+  */
+  int __stdcall NDK_X13_SCEN_REFRESH(LPCTSTR szScenarioName);
+
+  /*!
+  * \brief   Finalize the given scenario/model and free allocated resources
+  *
+  *   \return status code of the operation
+  *   \retval #NDK_SUCCESS Operation successful
+  *   \retval #NDK_FAILED operation is unsuccessful (see \ref SFMacros.h)
+  *   \sa NDK_X12_ENV_INIT(), NDK_X12_ENV_CLEANUP(), NDK_X12_SCEN_INIT(), NDK_X12_DATA_FILE(), NDK_X12_SPC_FILE(), NDK_X12_RUN_BATCH(), NDK_X12_RUN_SCENARIO(), NDK_X12_RUN_STAT(), NDK_X12_OUT_FILE(), NDK_X12_OUT_SERIES(), NDK_X12_FORE_SERIES()
+  */
+  int __stdcall NDK_X13_SCEN_CLEAUP(LPCTSTR szScenarioName  /*!< [in] is the scenario name or the model unique identifier */
+                                    );
+
+
+  /*!
+  * \brief   Write the given data into an X13as formatted data file
+  *
+  *   \return status code of the operation
+  *   \retval #NDK_SUCCESS Operation successful
+  *   \retval #NDK_FAILED operation is unsuccessful (see \ref SFMacros.h)
+  *   \sa NDK_X13_ENV_INIT(), NDK_X13_ENV_CLEANUP(), NDK_X13_SCEN_INIT(), NDK_X13_SCEN_CLEAUP()
+  */
+  int __stdcall NDK_X13_DATA_FILE(LPCTSTR szScenarioName, LPCTSTR szOutputFile,
+    double* X,            ///< [in] is the univariate time series data (a one dimensional array).
+    size_t nLen,          ///< [in] is the number of observations in X
+    BOOL monthly,         ///< [in] is a boolean flag for whether the data is monthly/quartelry sampled.
+    LONG startDate,       ///< [in] is the serial date number of the 1st observation in the series
+    WORD reserved         ///< [in] is a reserved argument for future releases. must be set to 1
+    );
+
+  /*!
+  * \brief   Write the actual holidays dates into an genhol formatted data file
+  *
+  *   \return status code of the operation
+  *   \retval #NDK_SUCCESS Operation successful
+  *   \retval #NDK_FAILED operation is unsuccessful (see \ref SFMacros.h)
+  *   \sa NDK_X13_ENV_INIT(), NDK_X13_ENV_CLEANUP(), NDK_X13_SCEN_INIT(), NDK_X13_SCEN_CLEAUP()
+  */
+  int __stdcall NDK_X13_HOLIDAY_FILE( LPCTSTR szScenarioName, ///< [in] is the scenario name or the model unique identifier
+                                      LPCTSTR szHoliday,      ///< [in] is the holiday code (unique identifier) to get dates for.
+                                      LONG startDate,         ///< [in] is the serial date number of the beginning of the search interval
+                                      LONG endDate            ///< [in] is the serial date number of the end of the search interval
+                                      );
+
+
+  /*!
+  * \brief   Write the (user) holidays dates into an genhol formatted data file
+  *
+  *   \return status code of the operation
+  *   \retval #NDK_SUCCESS Operation successful
+  *   \retval #NDK_FAILED operation is unsuccessful (see \ref SFMacros.h)
+  *   \sa NDK_X13_HOLIDAY_FILE(), NDK_X13_SCEN_INIT(), NDK_X13_SCEN_CLEAUP()
+  */
+  int __stdcall NDK_X13_USER_EVENT_FILE(LPCTSTR szScenarioName,   ///< [in] is the scenario name or the model unique identifier
+                                        LPCTSTR szName,           ///< [in] is the user-defined name (unique identifier) of the event.
+                                        PLONG holidays,           ///< [in] is an array of dates serial numbers.
+                                        size_t nLen               ///< [in] is the number of elements in the [holidays] array.
+                                        );
+
+
+  int __stdcall NDK_X13_ADD_EVENT_FACTOR( LPCTSTR szScenarioName, ///< [in] is the scenario name or the model unique identifier
+                                          LPCTSTR szName,         ///< [in] is the user-defined name (unique identifier) of the event.
+                                          PLONG holidays,         ///< [in] (optional, uer-defined only) is an array of dates serial numbers.
+                                          size_t nLen,            ///< [in] (optional, uer-defined only) is the number of elements in the [holidays] array.
+                                          double begbefore,       ///< [in] Denotes the position relative to the holiday of the beginning of the window used to generate the before-holiday regressor. This value should be negative, and less than or equal to the value for the endbefore argument. The minimum value that can be specified is -42.
+                                          double endbefore,       ///< [in] Denotes the position relative to the holiday of the end of the window used to generate the before-holiday regressor. This value should be negative.
+                                          double begAfter,        ///< [in] Denotes the position relative to the holiday of the beginning of the window used to generate the after-holiday regressor. Since this effect occurs after the holiday, the value should be non-negative.
+                                          double endAfter,        ///< [in] Denotes the position relative to the holiday of the end of the window used to generate the after-holiday regressor. This value should be positive, and greater than or equal to the value for the begafter argument. The maximum value that can be specified is 49
+                                          double zeroBefore,      ///< [in] Defines the year before which all values in the regressor are set to be zero. If this argument is set, first < zerobefore <= last, and if zeroafter is set, then zerobefore < zeroafter.
+                                          double zeroAfter,       ///< [in] Defines the year on or after which all values in the regressor are set to be zero. If this argument is set, first < zeroafter <= last, and if zeroafter is set, then zerobefore < zeroafter.
+                                          WORD   wCenter          ///< [in] Specifies the removal of the (sample) mean or the seasonal means from the user-defined regression variables.
+                                          ///<  0 = None, 1=mean, 2=calendar (only with ratio type of data)
+                                          );
+
+
+  int __stdcall NDK_X13_REGRESSORS_SETTING( LPCTSTR szScenarioName, ///< [in] is the scenario name or the model unique identifier
+                                            double   dwFirstYear,
+                                            double   dwLastYear,
+                                            double   dwFirstMeanYear,
+                                            double   dwLastMeanYear,
+                                            DWORD    dwPeriod,
+                                            BOOL     bRatio,
+                                            double   dwStockDay
+                                            );
+                                            
+  int __stdcall NDK_X13_RUN_GENHOL(LPCTSTR szScenarioName);
+  int __stdcall NDK_X13_RUN_BATCH(LPCTSTR szScenarioName, LPCTSTR szBatchFile, LPWORD status);
+  int __stdcall NDK_X13_SPC_SERIES_SETTING(LPCTSTR szScenarioName, LPCTSTR szSeriesName, double* pData, size_t nLen, BOOL stock, BOOL monthly, LONG startDate, WORD fileType);
+  int __stdcall NDK_X13_SPC_TRANSFORM_SETTING(LPCTSTR szScenarioName, X13TRANSFORM_METHOD zTransform, double zPower);
+  int __stdcall NDK_X13_SPC_PRIOR_ADJUST_SETTING( LPCTSTR szScenarioName, BOOL lom, BOOL loq, BOOL leapYear,
+                                                  double* pTempData, size_t nTempLen, LONG zTempStartDate, X13PRIORADJUST_TYPE nTempDataType,
+                                                  double* pPermData, size_t nPermLen, LONG zPermStartDate, X13PRIORADJUST_TYPE nPermDataType);
+  int __stdcall NDK_X13_SPC_X11_SETTING(LPCTSTR szScenarioName, BOOL enable, X11_MODE_TYPE mode, X11_SEASONALMA_TYPE seasonalma, int trendma, double sigmaLL, double sigmaUL);
+  int __stdcall NDK_X13_SPC_SEATS_SETTING(LPCTSTR szScenarioName, BOOL enable, BOOL hpCycle, BOOL infiniteFilter, BOOL bAdmissableCompositionApprox, BOOL bAcceptSeasonStationary, double maxLBQStat);
+  int __stdcall NDK_X13_WRITE_SPC_FILE(LPCTSTR szScenarioName);
+  int __stdcall NDK_X13_RUN_SPC_FILE(LPCTSTR szScenarioName);
+  int __stdcall NDK_X13AS_OUT_FILE(LPCTSTR szScenarioName, WORD retType, LPTSTR szOutFile, size_t* nLen, BOOL OpenFileFlag);
+  int __stdcall NDK_X13AS_OUT_SERIES(LPCTSTR szScenarioName, LPCTSTR szComponent, double* pData, size_t* nLen);
+
+  ///@}
+
+  /// \name SARIMAX
   /// Seasonal ARIMA-X model functions
   /// @{
 
   /*! 
-  * \brief Computes the log-likelihood ((LLF), Akaike Information Criterion (AIC) or other goodness of fit function of the SARIMA-X model.   
+  * \brief Computes the log-likelihood ((LLF), Akaike Information Criterion (AIC) or other goodness of fit functions of the SARIMA-X model.
   * 
-  * \note 1. The time series is homogeneous or equally spaced
+  * \note 1. The time series is homogeneous or equally spaced.
   * \note 2. The time series may include missing values (e.g. NaN) at either end.
-  * \note 3. The residuals/innovations standard deviation (i.e.\f$\sigma\f$) should be greater than zero
+  * \note 3. The residuals/innovations standard deviation (i.e.\f$\sigma\f$) should be greater than zero.
+  * \note 4. The maximum likelihood estimation (MLE) is a statistical method for fitting a model to the data and provides estimates for the model's parameters.
+  * \note 5. The intercept or the regression constant term input argument is optional. If omitted, a zero value is assumed. 
+  * \note 6. The long-run mean argumen (mean) of the differenced regression residuals can take any value. If omitted, a zero value is assumed.
+  * \note 7. The non-seasonal integration order - d - is optional and can be omitted, in which case d is assumed zero.
+  * \note 8. The seasonal integration order - sD - is optional and can be omitted, in which case sD is assumed zero.
+  * \note 9. The season length - s - is optional and can be omitted, in which case s is assumed zero (i.e. Plain ARIMA).
   *
   *   \return status code of the operation
-  *   \retval #NDK_SUCCESS Operation successful
+  *   \retval #NDK_SUCCESS operation successful
   *   \retval #NDK_FAILED operation is unsuccessful (see \ref SFMacros.h)
   *   \sa NDK_SARIMAX_FITTED(), NDK_SARIMAX_PARAM(), NDK_SARIMAX_FORE(), NDK_SARIMAX_FORE(), NDK_SARIMAX_VALIDATE()
   */
   int __stdcall NDK_SARIMAX_GOF(double*  pData,       ///< [in] is the response univariate time series data (a one dimensional array).
                                 double** pFactors,    ///< [in] is the exogneous factors time series data (each column is a separate factor, and each row is an observation).
-                                size_t nSize,         ///< [in] is the number of observations. 
-                                size_t   nFactors,    ///< [in] is the number of exognous factors 
-                                double*  fBetas,      ///< [in] is the weights or loading of the exogneous factors
+                                size_t nSize,         ///< [in] is the number of observations.
+                                size_t   nFactors,    ///< [in] is the number of exognous factors.
+                                double*  fBetas,      ///< [in] is the weights or loading of the exogneous factors.
                                 double   mean,        ///< [in] is the ARIMA/SARIMA model's long-run mean/trend (i.e. mu). If missing (i.e. NaN), then it is assumed zero.
-                                double sigma,         ///< [in] is the standard deviation of the model's residuals/innovations. 
-                                WORD nIntegral,       ///< [in] is the non-seasonal difference order
-                                double* phis,         ///< [in] are the coefficients's values of the non-seasonal AR component  
-                                size_t p,             ///< [in] is the order of the non-seasonal AR component
-                                double* thetas,       ///< [in] are the coefficients's values of the non-seasonal MA component
-                                size_t q,             ///< [in] is the order of the non-seasonal MA component
-                                WORD nSIntegral,      ///< [in] is the seasonal difference
-                                WORD nSPeriod,        ///< [in] is the number of observations per one period (e.g. 12=Annual, 4=Quarter)
-                                double* sPhis,        ///< [in] are the coefficients's values of the seasonal AR component
-                                size_t sP,            ///< [in] is the order of the seasonal AR component
-                                double* sThetas,      ///< [in] are the coefficients's values of the seasonal MA component 
-                                size_t sQ,            ///< [in] is the order of the seasonal MA component
-                                GOODNESS_OF_FIT_FUNC retType,   ///< [in] is a switch to select a fitness measure ( see \ref #GOODNESS_OF_FIT_FUNC)  
+                                double sigma,         ///< [in] is the standard deviation of the model's residuals/innovations.
+                                WORD nIntegral,       ///< [in] is the non-seasonal difference order.
+                                double* phis,         ///< [in] are the coefficients's values of the non-seasonal AR component.
+                                size_t p,             ///< [in] is the order of the non-seasonal AR component.
+                                double* thetas,       ///< [in] are the coefficients's values of the non-seasonal MA component.
+                                size_t q,             ///< [in] is the order of the non-seasonal MA component.
+                                WORD nSIntegral,      ///< [in] is the seasonal difference.
+                                WORD nSPeriod,        ///< [in] is the number of observations per one period (e.g. 12=Annual, 4=Quarter).
+                                double* sPhis,        ///< [in] are the coefficients's values of the seasonal AR component.
+                                size_t sP,            ///< [in] is the order of the seasonal AR component.
+                                double* sThetas,      ///< [in] are the coefficients's values of the seasonal MA component.
+                                size_t sQ,            ///< [in] is the order of the seasonal MA component.
+                                GOODNESS_OF_FIT_FUNC retType,   ///< [in] is a switch to select a fitness measure ( see \ref #GOODNESS_OF_FIT_FUNC).
                                 double* retVal        ///< [out] is the calculated goodness of fit value.
                                 );
 
 
     /*! 
-  * \brief   Examines the model's parameters for stability constraints (e.g. causality, invertability, stationary, etc.). 
+  * \brief   Examines the model's parameters for stability constraints (e.g. causality, invertability, stationary, etc.).
   * 
-  * \note 1. The time series is homogeneous or equally spaced
+  * \note 1. The time series is homogeneous or equally spaced.
   * \note 2. The time series may include missing values (e.g. NaN) at either end.
-  * \note 3. The residuals/innovations standard deviation (i.e.\f$\sigma\f$) should be greater than zero
+  * \note 3. The intercept or the regression constant term input argument is optional. If omitted, a zero value is assumed.
+  * \note 4. The residuals/innovations standard deviation (i.e.\f$\sigma\f$) should be greater than zero.
+  * \note 5. The non-seasonal integration order - d - is optional and can be omitted, in which case d is assumed zero.
+  * \note 6. The seasonal integration order - sD - is optional and can be omitted, in which case sD is assumed zero.
+  * \note 7. The season length - s - is optional and can be omitted, in which case s is assumed zero (i.e. Plain ARIMA).
   *
   *   \return status code of the operation
-  *   \retval #NDK_SUCCESS Operation successful
+  *   \retval #NDK_SUCCESS operation successful
   *   \retval #NDK_FAILED operation is unsuccessful (see \ref SFMacros.h)
   *   \sa NDK_SARIMA_GOF(), NDK_SARIMA_RESID(), NDK_SARIMA_PARAM(), NDK_SARIMA_FORE(), NDK_SARIMA_FITTED()
   */
-  int __stdcall NDK_SARIMAX_VALIDATE(double mean,         ///< [in] is the model mean (i.e. mu) for the differenced series. 
-                                    double sigma,         ///< [in] is the standard deviation of the model's residuals/innovations. 
-                                    WORD nIntegral,       ///< [in] is the non-seasonal difference order
-                                    double* phis,         ///< [in] are the coefficients's values of the non-seasonal AR component  
-                                    size_t p,             ///< [in] is the order of the non-seasonal AR component
-                                    double* thetas,       ///< [in] are the coefficients's values of the non-seasonal MA component
-                                    size_t q,             ///< [in] is the order of the non-seasonal MA component
-                                    WORD nSIntegral,      ///< [in] is the seasonal difference
-                                    WORD nSPeriod,        ///< [in] is the number of observations per one period (e.g. 12=Annual, 4=Quarter)
-                                    double* sPhis,        ///< [in] are the coefficients's values of the seasonal AR component
-                                    size_t sP,            ///< [in] is the order of the seasonal AR component
-                                    double* sThetas,      ///< [in] are the coefficients's values of the seasonal MA component 
-                                    size_t sQ             ///< [in] is the order of the seasonal MA component
+  int __stdcall NDK_SARIMAX_VALIDATE(double mean,         ///< [in] is the model mean (i.e. mu) for the differenced series.
+                                    double sigma,         ///< [in] is the standard deviation of the model's residuals/innovations.
+                                    WORD nIntegral,       ///< [in] is the non-seasonal difference order.
+                                    double* phis,         ///< [in] are the coefficients's values of the non-seasonal AR component.
+                                    size_t p,             ///< [in] is the order of the non-seasonal AR component.
+                                    double* thetas,       ///< [in] are the coefficients's values of the non-seasonal MA component.
+                                    size_t q,             ///< [in] is the order of the non-seasonal MA component.
+                                    WORD nSIntegral,      ///< [in] is the seasonal difference.
+                                    WORD nSPeriod,        ///< [in] is the number of observations per one period (e.g. 12=Annual, 4=Quarter).
+                                    double* sPhis,        ///< [in] are the coefficients's values of the seasonal AR component.
+                                    size_t sP,            ///< [in] is the order of the seasonal AR component.
+                                    double* sThetas,      ///< [in] are the coefficients's values of the seasonal MA component.
+                                    size_t sQ             ///< [in] is the order of the seasonal MA component.
                                     );
 
     /*! 
-  * \brief   Returns an array of cells for the fitted values (i.e. mean, volatility and residuals)
+  * \brief   Returns the in-sample model fitted values of the conditional mean, volatility or residuals.
   * 
-  * \note 1. The time series is homogeneous or equally spaced
+  * \note 1. The time series is homogeneous or equally spaced.
   * \note 2. The time series may include missing values (e.g. NaN) at either end.
-  * \note 3. The residuals/innovations standard deviation (i.e.\f$\sigma\f$) should be greater than zero
+  * \note 3. The intercept or the regression constant term input argument is optional. If omitted, a zero value is assumed.
+  * \note 4. The residuals/innovations standard deviation (i.e.\f$\sigma\f$) should be greater than zero.
+  * \note 5. The long-run mean argument (mean) of the differenced regression residuals can take any value. If omitted, a zero value is assumed. 
+  * \note 6. The non-seasonal integration order - d - is optional and can be omitted, in which case d is assumed zero.
+  * \note 7. The seasonal integration order - sD - is optional and can be omitted, in which case sD is assumed zero.
+  * \note 8. The season length - s - is optional and can be omitted, in which case s is assumed zero (i.e. Plain ARIMA).
   *
   *   \return status code of the operation
-  *   \retval #NDK_SUCCESS Operation successful
+  *   \retval #NDK_SUCCESS operation successful
   *   \retval #NDK_FAILED operation is unsuccessful (see \ref SFMacros.h)
   *   \sa NDK_SARIMAX_GOF(), NDK_SARIMAX_RESID(), NDK_SARIMAX_PARAM(), NDK_SARIMAX_FORE(), NDK_SARIMAX_VALIDATE()
   */
   int __stdcall NDK_SARIMAX_FITTED( double* pData,        ///< [inout] is the univariate time series data (a one dimensional array).
                                     double** pFactors,    ///< [in] is the exogneous factors time series data (each column is a separate factor, and each row is an observation).
-                                    size_t nSize,         ///< [in] is the number of observations. 
-                                    size_t   nFactors,    ///< [in] is the number of exognous factors 
-                                    double*  fBetas,      ///< [in] is the weights or loading of the exogneous factors
+                                    size_t nSize,         ///< [in] is the number of observations.
+                                    size_t   nFactors,    ///< [in] is the number of exognous factors.
+                                    double*  fBetas,      ///< [in] is the weights or loading of the exogneous factors.
                                     double   mean,        ///< [in] is the ARIMA/SARIMA model's long-run mean/trend (i.e. mu). If missing (i.e. NaN), then it is assumed zero.
-                                    double sigma,         ///< [in] is the standard deviation of the model's residuals/innovations. 
-                                    WORD nIntegral,       ///< [in] is the non-seasonal difference order
-                                    double* phis,         ///< [in] are the coefficients's values of the non-seasonal AR component  
-                                    size_t p,             ///< [in] is the order of the non-seasonal AR component
-                                    double* thetas,       ///< [in] are the coefficients's values of the non-seasonal MA component
-                                    size_t q,             ///< [in] is the order of the non-seasonal MA component
-                                    WORD nSIntegral,      ///< [in] is the seasonal difference
-                                    WORD nSPeriod,        ///< [in] is the number of observations per one period (e.g. 12=Annual, 4=Quarter)
-                                    double* sPhis,        ///< [in] are the coefficients's values of the seasonal AR component
-                                    size_t sP,            ///< [in] is the order of the seasonal AR component
-                                    double* sThetas,      ///< [in] are the coefficients's values of the seasonal MA component 
-                                    size_t sQ,            ///< [in] is the order of the seasonal MA component
-                                    FIT_RETVAL_FUNC retType          ///< [in]  is a switch to select a output type ( see \ref #FIT_RETVAL_FUNC)
+                                    double sigma,         ///< [in] is the standard deviation of the model's residuals/innovations.
+                                    WORD nIntegral,       ///< [in] is the non-seasonal difference order.
+                                    double* phis,         ///< [in] are the coefficients's values of the non-seasonal AR component.
+                                    size_t p,             ///< [in] is the order of the non-seasonal AR component.
+                                    double* thetas,       ///< [in] are the coefficients's values of the non-seasonal MA component.
+                                    size_t q,             ///< [in] is the order of the non-seasonal MA component.
+                                    WORD nSIntegral,      ///< [in] is the seasonal difference.
+                                    WORD nSPeriod,        ///< [in] is the number of observations per one period (e.g. 12=Annual, 4=Quarter).
+                                    double* sPhis,        ///< [in] are the coefficients's values of the seasonal AR component.
+                                    size_t sP,            ///< [in] is the order of the seasonal AR component.
+                                    double* sThetas,      ///< [in] are the coefficients's values of the seasonal MA component.
+                                    size_t sQ,            ///< [in] is the order of the seasonal MA component.
+                                    FIT_RETVAL_FUNC retType          ///< [in]  is a switch to select a output type ( see \ref #FIT_RETVAL_FUNC).
                                     );
 
 
     /*! 
-  * \brief  Returns an array of cells for the initial (non-optimal), optimal or standard errors of the model's parameters.
+  * \brief  Returns the quick guess, optimal (calibrated) or std. errors of the values of model's parameters.
   * 
-  * \note 1. The time series is homogeneous or equally spaced
+  * \note 1. The time series is homogeneous or equally spaced.
   * \note 2. The time series may include missing values (e.g. NaN) at either end.
-  * \note 3. The residuals/innovations standard deviation (i.e.\f$\sigma\f$) should be greater than zero
+  * \note 3. The intercept or the regression constant term input argument is optional. If omitted, a zero value is assumed.
+  * \note 4. The residuals/innovations standard deviation (i.e.\f$\sigma\f$) should be greater than zero.
+  * \note 5. The long-run mean argument (mean) of the differenced regression residuals can take any value. If omitted, a zero value is assumed.
+  * \note 6. The non-seasonal integration order - d - is optional and can be omitted, in which case d is assumed zero.
+  * \note 7. The seasonal integration order - sD - is optional and can be omitted, in which case sD is assumed zero.
+  * \note 8. The season length - s - is optional and can be omitted, in which case s is assumed zero (i.e. Plain ARIMA).
   *
   *   \return status code of the operation
-  *   \retval #NDK_SUCCESS Operation successful
+  *   \retval #NDK_SUCCESS operation successful
   *   \retval #NDK_FAILED operation is unsuccessful (see \ref SFMacros.h)
   *   \sa NDK_SARIMAX_GOF(), NDK_SARIMAX_RESID(), NDK_SARIMAX_FORE(), NDK_SARIMAX_FITTED(), NDK_SARIMAX_VALIDATE()
   */
   int __stdcall NDK_SARIMAX_PARAM(  double* pData,        ///< [inout] is the univariate time series data (a one dimensional array).
                                     double** pFactors,    ///< [in] is the exogneous factors time series data (each column is a separate factor, and each row is an observation).
-                                    size_t nSize,         ///< [in] is the number of observations. 
-                                    size_t   nFactors,    ///< [in] is the number of exognous factors 
-                                    double*  fBetas,      ///< [inout] is the weights or loading of the exogneous factors
-                                    double* mean,         ///< [inout] is the mean of the differenced time series process
-                                    double* sigma,        ///< [inout] is the standard deviation of the model's residuals/innovations. 
-                                    WORD nIntegral,       ///< [in] is the non-seasonal difference order
-                                    double* phis,         ///< [inout] are the coefficients's values of the non-seasonal AR component  
-                                    size_t p,             ///< [in] is the order of the non-seasonal AR component
-                                    double* thetas,       ///< [inout] are the coefficients's values of the non-seasonal MA component
-                                    size_t q,             ///< [in] is the order of the non-seasonal MA component
-                                    WORD nSIntegral,      ///< [in] is the seasonal difference
-                                    WORD nSPeriod,        ///< [in] is the number of observations per one period (e.g. 12=Annual, 4=Quarter)
-                                    double* sPhis,        ///< [inout] are the coefficients's values of the seasonal AR component
-                                    size_t sP,            ///< [in] is the order of the seasonal AR component
-                                    double* sThetas,      ///< [inout] are the coefficients's values of the seasonal MA component 
-                                    size_t sQ,            ///< [in] is the order of the seasonal MA component
-                                    MODEL_RETVAL_FUNC retType, ///< [in] is a switch to select the type of value returned: 1= Quick Guess, 2=Calibrated, 3= Std. Errors ( see \ref #MODEL_RETVAL_FUNC)
-                                    size_t maxIter        ///< [in] is the maximum number of iterations used to calibrate the model. If missing or less than 100, the default maximum of 100 is assumed. 
+                                    size_t nSize,         ///< [in] is the number of observations.
+                                    size_t   nFactors,    ///< [in] is the number of exognous factors.
+                                    double*  fBetas,      ///< [inout] is the weights or loading of the exogneous factors.
+                                    double* mean,         ///< [inout] is the mean of the differenced time series process.
+                                    double* sigma,        ///< [inout] is the standard deviation of the model's residuals/innovations.
+                                    WORD nIntegral,       ///< [in] is the non-seasonal difference order.
+                                    double* phis,         ///< [inout] are the coefficients's values of the non-seasonal AR component.
+                                    size_t p,             ///< [in] is the order of the non-seasonal AR component.
+                                    double* thetas,       ///< [inout] are the coefficients's values of the non-seasonal MA component.
+                                    size_t q,             ///< [in] is the order of the non-seasonal MA component.
+                                    WORD nSIntegral,      ///< [in] is the seasonal difference.
+                                    WORD nSPeriod,        ///< [in] is the number of observations per one period (e.g. 12=Annual, 4=Quarter).
+                                    double* sPhis,        ///< [inout] are the coefficients's values of the seasonal AR component.
+                                    size_t sP,            ///< [in] is the order of the seasonal AR component.
+                                    double* sThetas,      ///< [inout] are the coefficients's values of the seasonal MA component.
+                                    size_t sQ,            ///< [in] is the order of the seasonal MA component.
+                                    MODEL_RETVAL_FUNC retType, ///< [in] is a switch to select the type of value returned: 1= Quick Guess, 2=Calibrated, 3= Std. Errors ( see \ref #MODEL_RETVAL_FUNC).
+                                    size_t maxIter        ///< [in] is the maximum number of iterations used to calibrate the model. If missing or less than 100, the default maximum of 100 is assumed.
                                   );
 
 
     /*! 
   * \brief   Calculates the out-of-sample forecast statistics.
   * 
-  * \note 1. The time series is homogeneous or equally spaced
+  * \note 1. The time series is homogeneous or equally spaced.
   * \note 2. The time series may include missing values (e.g. NaN) at either end.
-  * \note 3. The residuals/innovations standard deviation (i.e.\f$\sigma\f$) should be greater than zero
+  * \note 3. The residuals/innovations standard deviation (i.e.\f$\sigma\f$) should be greater than zero.
   * \note 4. The exogneous factors input are expected to have at least n-more observations than the reponse variable.
+  * \note 5. The intercept or the regression constant term input argument is optional. If omitted, a zero value is assumed.
+  * \note 6. The long-run mean argument (mean) of the differenced regression residuals can take any value. If omitted, a zero value is assumed.
+  * \note 7. The non-seasonal integration order - d - is optional and can be omitted, in which case d is assumed zero.
+  * \note 8. The seasonal integration order - sD - is optional and can be omitted, in which case sD is assumed zero.
+  * \note 9. The season length - s - is optional and can be omitted, in which case s is assumed zero (i.e. Plain ARIMA).
   *
   *   \return status code of the operation
-  *   \retval #NDK_SUCCESS Operation successful
+  *   \retval #NDK_SUCCESS operation successful
   *   \retval #NDK_FAILED operation is unsuccessful (see \ref SFMacros.h)
   *   \sa NDK_SARIMA_GOF(), NDK_SARIMA_RESID(), NDK_SARIMA_PARAM(), NDK_SARIMA_FITTED(), NDK_SARIMA_VALIDATE()
   */
   int __stdcall NDK_SARIMAX_FORE(double* pData,       ///< [in] is the univariate time series data (a one dimensional array).
                                 double** pFactors,    ///< [in] is the exogneous factors time series data (each column is a separate factor, and each row is an observation).
-                                size_t  nSize,        ///< [in] is the number of observations. 
-                                size_t  nFactors,     ///< [in] is the number of exognous factors 
-                                double* fBetas,       ///< [inout] is the weights or loading of the exogneous factors
-                                double  mean,         ///< [inout] is the mean of the ARMA process
-                                double sigma,         ///< [in] is the standard deviation of the model's residuals/innovations. 
-                                WORD nIntegral,       ///< [in] is the non-seasonal difference order
-                                double* phis,         ///< [in] are the coefficients's values of the non-seasonal AR component  
-                                size_t p,             ///< [in] is the order of the non-seasonal AR component
-                                double* thetas,       ///< [in] are the coefficients's values of the non-seasonal MA component
-                                size_t q,             ///< [in] is the order of the non-seasonal MA component
-                                WORD nSIntegral,      ///< [in] is the seasonal difference
-                                WORD nSPeriod,        ///< [in] is the number of observations per one period (e.g. 12=Annual, 4=Quarter)
-                                double* sPhis,        ///< [in] are the coefficients's values of the seasonal AR component
-                                size_t sP,            ///< [in] is the order of the seasonal AR component
-                                double* sThetas,      ///< [in] are the coefficients's values of the seasonal MA component 
-                                size_t sQ,            ///< [in] is the order of the seasonal MA component
-                                size_t nStep,         ///< [in] is the forecast time/horizon (expressed in terms of steps beyond end of the time series). 
-                                FORECAST_RETVAL_FUNC retType, ///< [in] is a switch to select the type of value returned (see \ref #FORECAST_RETVAL_FUNC)
-                                double  alpha,        ///< [in] is the statistical significance level. If missing, a default of 5% is assumed. 
-                                double* retVal        ///< [out] is the calculated forecast value
+                                size_t  nSize,        ///< [in] is the number of observations.
+                                size_t  nFactors,     ///< [in] is the number of exognous factors.
+                                double* fBetas,       ///< [inout] is the weights or loading of the exogneous factors.
+                                double  mean,         ///< [inout] is the mean of the ARMA process.
+                                double sigma,         ///< [in] is the standard deviation of the model's residuals/innovations.
+                                WORD nIntegral,       ///< [in] is the non-seasonal difference order.
+                                double* phis,         ///< [in] are the coefficients's values of the non-seasonal AR component.
+                                size_t p,             ///< [in] is the order of the non-seasonal AR component.
+                                double* thetas,       ///< [in] are the coefficients's values of the non-seasonal MA component.
+                                size_t q,             ///< [in] is the order of the non-seasonal MA component.
+                                WORD nSIntegral,      ///< [in] is the seasonal difference.
+                                WORD nSPeriod,        ///< [in] is the number of observations per one period (e.g. 12=Annual, 4=Quarter).
+                                double* sPhis,        ///< [in] are the coefficients's values of the seasonal AR component.
+                                size_t sP,            ///< [in] is the order of the seasonal AR component.
+                                double* sThetas,      ///< [in] are the coefficients's values of the seasonal MA component.
+                                size_t sQ,            ///< [in] is the order of the seasonal MA component.
+                                size_t nStep,         ///< [in] is the forecast time/horizon (expressed in terms of steps beyond end of the time series).
+                                FORECAST_RETVAL_FUNC retType, ///< [in] is a switch to select the type of value returned (see \ref #FORECAST_RETVAL_FUNC).
+                                double  alpha,        ///< [in] is the statistical significance level. If missing, a default of 5% is assumed.
+                                double* retVal        ///< [out] is the calculated forecast value.
                                 );
 
 
     /*! 
-  * \brief  Returns an array of cells for the initial (non-optimal), optimal or standard errors of the model's parameters.
+  * \brief  Calculates the out-of-sample simulated values. 
   * 
-  * \note 1. The time series is homogeneous or equally spaced
+  * \note 1. The time series is homogeneous or equally spaced.
   * \note 2. The time series may include missing values (e.g. NaN) at either end.
-  * \note 3. The residuals/innovations standard deviation (i.e.\f$\sigma\f$) should be greater than zero
-  * \note 4. The exogneous factors input are expected to have at least n-more observations than the reponse variable.
+  * \note 3. The residuals/innovations standard deviation (i.e.\f$\sigma\f$) should be greater than zero.
+  * \note 4. The intercept or the regression constant term input argument is optional. If omitted, a zero value is assumed.
+  * \note 5. The exogenous factors input are expected to have at least n-more observations than the reponse variable.
+  * \note 6. The long-run mean argument (mean) of the differenced regression residuals can take any value. If omitted, a zero value is assumed.
+  * \note 7. The non-seasonal integration order - d - is optional and can be omitted, in which case d is assumed zero.
+  * \note 8. The seasonal integration order - sD - is optional and can be omitted, in which case sD is assumed zero.
+  * \note 9. The season length - s - is optional and can be omitted, in which case s is assumed zero (i.e. Plain ARIMA).
   *
   *   \return status code of the operation
   *   \retval #NDK_SUCCESS Operation successful
   *   \retval #NDK_FAILED operation is unsuccessful (see \ref SFMacros.h)
   *   \sa NDK_SARIMA_GOF(), NDK_SARIMA_RESID(), NDK_SARIMA_FORE(), NDK_SARIMA_FITTED(), NDK_SARIMA_VALIDATE()
   */
-  int __stdcall NDK_SARIMAX_SIM(double* fBetas,     ///< [inout] is the weights or loading of the exogneous factors
-                                size_t  nFactors,   ///< [in] is the number of exognous factors 
-                                double  mean,       ///< [inout] is the mean of the ARMA process
-                                double sigma,       ///< [in] is the standard deviation of the model's residuals/innovations. 
-                                WORD nIntegral,     ///< [in] is the non-seasonal difference order
-                                double* phis,       ///< [in] are the coefficients's values of the non-seasonal AR component  
-                                size_t p,           ///< [in] is the order of the non-seasonal AR component
-                                double* thetas,     ///< [in] are the coefficients's values of the non-seasonal MA component
-                                size_t q,           ///< [in] is the order of the non-seasonal MA component
-                                WORD nSIntegral,    ///< [in] is the seasonal difference
-                                WORD nSPeriod,      ///< [in] is the number of observations per one period (e.g. 12=Annual, 4=Quarter)
-                                double* sPhis,      ///< [in] are the coefficients's values of the seasonal AR component
-                                size_t sP,          ///< [in] is the order of the seasonal AR component
-                                double* sThetas,    ///< [in] are the coefficients's values of the seasonal MA component 
-                                size_t sQ,          ///< [in] is the order of the seasonal MA component
+  int __stdcall NDK_SARIMAX_SIM(double* fBetas,     ///< [inout] is the weights or loading of the exogneous factors.
+                                size_t  nFactors,   ///< [in] is the number of exognous factors.
+                                double  mean,       ///< [inout] is the mean of the ARMA process.
+                                double sigma,       ///< [in] is the standard deviation of the model's residuals/innovations.
+                                WORD nIntegral,     ///< [in] is the non-seasonal difference order.
+                                double* phis,       ///< [in] are the coefficients's values of the non-seasonal AR component.
+                                size_t p,           ///< [in] is the order of the non-seasonal AR component.
+                                double* thetas,     ///< [in] are the coefficients's values of the non-seasonal MA component.
+                                size_t q,           ///< [in] is the order of the non-seasonal MA component.
+                                WORD nSIntegral,    ///< [in] is the seasonal difference.
+                                WORD nSPeriod,      ///< [in] is the number of observations per one period (e.g. 12=Annual, 4=Quarter).
+                                double* sPhis,      ///< [in] are the coefficients's values of the seasonal AR component.
+                                size_t sP,          ///< [in] is the order of the seasonal AR component.
+                                double* sThetas,    ///< [in] are the coefficients's values of the seasonal MA component.
+                                size_t sQ,          ///< [in] is the order of the seasonal MA component.
                                 double* pData,      ///< [in] is the univariate time series data (a one dimensional array).
                                 double** pFactors,  ///< [in] is the past exogneous factors time series data (each column is a separate factor, and each row is an observation).
                                 size_t nSize,       ///< [in] is the number of observations in X. 
-                                UINT nSeed,         ///< [in] is an unsigned integer for setting up the random number generators  
-                                size_t nStep,       ///< [in] is the simulation time/horizon (expressed in terms of steps beyond end of the time series).   
-                                double* retVal      ///< [out] is the simulated value
+                                UINT nSeed,         ///< [in] is an unsigned integer for setting up the random number generators.
+                                size_t nStep,       ///< [in] is the simulation time/horizon (expressed in terms of steps beyond end of the time series).
+                                double* retVal      ///< [out] is the simulated value.
                                 );
 
 
@@ -4481,7 +4837,7 @@ extern "C"
                                             ///   6. Installation Path
                                             ///   7. Data (e.g. Log-file) Path
                                             ///   8. Computer ID(unique identifier)
-                           LPSTR szMsg,     ///< [out]  The buffer that will receive the return value
+                           LPTSTR szMsg,    ///< [out]  The buffer that will receive the return value
                            int nSize        ///< [inout] maximum number of characters to copy to the buffer.
                            );
   /*! 
@@ -4492,10 +4848,20 @@ extern "C"
   *   \sa SFMacros.h, SFLogger.h, SFLOG_LogMsg()
   */
   int   __stdcall NDK_MSG(  int nRetCode, ///< [in] is the log level (1=trace, 2=Debug, 3=Info, 4=Warn, 5=Error, 6=Fatal Error)
-                            LPSTR pMsg,   ///< [in] is the log message
+                            LPTSTR pMsg,  ///< [in] is the log message
                             size_t nSize  ///< [in] us the number of characters in pMsg
                             );
 
+
+  /*!
+  *   \brief set the seed value of the random number generator
+  *   \return status code of the operation
+  *   \retval #NDK_SUCCESS Operation successful
+  *   \retval Error code
+  *   \sa SFMacros.h, SFSDK.h
+  */
+  int   __stdcall NDK_RNG_SEED(ULONG ulSeed    ///< [in] is the new seed value for the random number generator
+                              );
 
   /*! 
   *   \brief Locate and return the full path of the default editor (e.g. notepad) in the system 
@@ -4504,8 +4870,8 @@ extern "C"
   *   \retval Error code
   *   \sa SFMacros.h, NDK_Init()
   */
-  int   __stdcall NDK_DEFAULT_EDITOR (LPSTR szFullPath, ///< [out]  is the buffer that will receive the return value
-                                      size_t* nSize     ///< [inout] is the maximum number of characters to copy to the buffer.
+  int   __stdcall NDK_DEFAULT_EDITOR (LPTSTR szFullPath, ///< [out]  is the buffer that will receive the return value
+                                      size_t* nSize      ///< [inout] is the maximum number of characters to copy to the buffer.
                                       );
 
 
@@ -4516,10 +4882,10 @@ extern "C"
   *   \retval Error code
   *   \sa NDK_REGEX_REPLACE(), NDK_REGEX_MATCH()
   */
-  int  __stdcall NDK_TOKENIZE (LPCSTR szTxt,      ///< [in] is the input string to match for. 
-                               LPCSTR szDelim,    ///< [in] is the character to use for splitting the string. If missing, comma (,) is used. 
+  int  __stdcall NDK_TOKENIZE (LPCTSTR szTxt,     ///< [in] is the input string to match for. 
+                               LPCTSTR szDelim,   ///< [in] is the character to use for splitting the string. If missing, comma (,) is used. 
                                short nOrder,      ///< [in] is the order of the token to return, where first = 1, second = 2,..., and last = -1. If missing, the first token is returned
-                               LPSTR pRetVal,     ///< [out] is the n-th token/substring in a string
+                               LPTSTR pRetVal,    ///< [out] is the n-th token/substring in a string
                                size_t nSize       ///< [in] is the number of characters in pRetVal buffer
                                );
   /*! 
@@ -4529,8 +4895,8 @@ extern "C"
   *   \retval Error code
   *   \sa NDK_REGEX_REPLACE(), NDK_TOKENIZE()
   */
-  int  __stdcall NDK_REGEX_MATCH( LPCSTR szLine,      ///< [in] is the input string to match for.
-                                  LPCSTR szPattern,   ///< [in] is the regular expression (regex PERL-style) to match the input string with (e.g. ^Thi[sS].*$). 
+  int  __stdcall NDK_REGEX_MATCH( LPCTSTR szLine,     ///< [in] is the input string to match for.
+                                  LPCTSTR szPattern,  ///< [in] is the regular expression (regex PERL-style) to match the input string with (e.g. ^Thi[sS].*$). 
                                   BOOL ignoreCase,    ///< [in] is a flag to instruct the function to ignore the letter-case in the string
                                   BOOL partialOK,     ///< [in] is a flag/switch to indicate whether a substring or a partial match (search) is permitted or to only consider full-string match.
                                   BOOL* bMatch        ///< [out] is the return value of the match.
@@ -4543,12 +4909,12 @@ extern "C"
   *   \retval Error code
   *   \sa NDK_REGEX_REPLACE(), NDK_TOKENIZE()
   */
-  int  __stdcall NDK_REGEX_REPLACE(LPCSTR szLine,   ///< [in] is the input string to process. 
-                                  LPCSTR szKey,     ///< [in] is the regular expression (PERL-style) (e.g. "^\d\w{1,2}.*$"). 
-                                  LPCSTR szValue,   ///< [in] is the value to replace the match with. If missing or omitted, an empty string is used
+  int  __stdcall NDK_REGEX_REPLACE(LPCTSTR szLine,  ///< [in] is the input string to process. 
+                                  LPCTSTR szKey,    ///< [in] is the regular expression (PERL-style) (e.g. "^\d\w{1,2}.*$"). 
+                                  LPCTSTR szValue,  ///< [in] is the value to replace the match with. If missing or omitted, an empty string is used
                                   BOOL ignoreCase,  ///< [in] is a flag to instruct the matching function whether to ignore letter-case. If missing, ignore_case is set to TRUE
                                   BOOL global,      ///< [in] is a flag to instruct the function whether to match and replace the first occurence (FALSE) or all the matches (TRUE). 
-                                  LPSTR pRetVal,    ///< [out] is the modified string after replacement
+                                  LPTSTR pRetVal,   ///< [out] is the modified string after replacement
                                   size_t nSize      ///< [in] is the size of the output buffer (pRetVal)
                                   );
   /*! 

@@ -1,11 +1,13 @@
-;/**
-;*  (c) 2007-2014 Spider Financial Corp.
-;*  All rights reserved.
+;/******************************************************************************
+;*  Copyright © Spider Financial Corp - All rights reserved.
+;*  Unauthorized copying of this file, via any medium is strictly prohibited
+;*  	Proprietary and confidential
 ;*  
-;*  $Revision: 12310 $
-;*  $Date: 2012-10-12 10:39:24 -0500 (Fri, 12 Oct 2012) $
-;*/
-VERSION		1.63
+;*  $Revision: 15834 $
+;*  $Date: 2016-08-25 13:54:04 -0500 (Thu, 25 Aug 2016) $
+;*****************************************************************************/
+VERSION		1.64
+LIBRARY   SFLUC.dll
 
 EXPORTS
 ;  entryname[=internalname] [@ordinal [NONAME]] [PRIVATE] [DATA]
@@ -20,6 +22,7 @@ EXPORTS
   ; XMLRPC Based API
   SFLUC_SERVICEDATE         @220  NONAME
   SFLUC_UPDATEVERSION       @225  NONAME
+  SFLUC_ACTIVATE_LICENSE    @226  NONAME
 
   SFLUC_MACHINEID           @300  NONAME
   SFLUC_LICENSE_KEY         @305  NONAME

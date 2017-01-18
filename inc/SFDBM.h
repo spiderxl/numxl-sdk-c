@@ -9,8 +9,8 @@
 *             All rights reserved.
 *  \author Spider Financial Corp
 *  \version 1.62
-*  $Revision: 12141 $
-*  $Date: 2012-06-29 16:25:58 -0500 (Fri, 29 Jun 2012) $
+*  $Revision: 15882 $
+*  $Date: 2016-09-08 21:19:51 -0500 (Thu, 08 Sep 2016) $
 */
 #pragma once
 
@@ -27,10 +27,11 @@ extern "C"
   *   \retval #NDK_FAILED Operation unsuccessful. See \ref SFMacros.h for more details.
   *   \sa SFDB_Shutdown()
   */
-  int  __stdcall SFDB_Init( LPCSTR szAppName, ///<  [in] User-defined application name
-                            LPCSTR szKey,     ///<  [in] NumXL License key
-                            LPCSTR szActCode, ///<  [in] Activation code  
-                            LPCSTR szTmpPath  ///<  [in] Temporary files and Logging directory
+  int  __stdcall SFDB_Init( LPCTSTR szAppName, ///<  [in] User-defined application name
+                            LPCTSTR szKey,     ///<  [in] NumXL License key
+                            LPCTSTR szActCode, ///<  [in] Activation code  
+                            LPCTSTR szTmpPath, ///<  [in] Temporary files and Logging directory
+                            LCID    zLocality  ///<  [in] Locale Id (Assigned by Microsoft) (e.g. en-US=1033, es-ES=1034, etc.)
                             );                
 
 
@@ -55,7 +56,7 @@ extern "C"
   *   \sa SFLUC_Shutdown()
   */
   int __stdcall SFDB_EDATE( LONG argDate,     ///< [in] start date expressed as number of days since 1.1.1970
-                            LPCSTR szPeriod,  ///< [in] description of a period range (e.g. "5-days", "1 month", "1m", "3 w", "-1 year"). 
+                            LPCTSTR szPeriod,  ///< [in] description of a period range (e.g. "5-days", "1 month", "1m", "3 w", "-1 year"). 
                             PLONG retVal      ///< [out] the calculated date that falls after the given period.
                             );
 
@@ -105,7 +106,7 @@ extern "C"
   */
   int __stdcall SFDB_DTADJUST(LONG argDate,         ///< [in] is a serial date number that represents a given date
                               WORD argNextPrev,     ///< [in] is the Business Day Convention (BDC): 1=Following, 2=Following Modified, 3=Preceding, 4=Preceding Modified, 5=Unadjusted (default
-                              LPCSTR holidays,      ///< [in] is a (:_:) separated list of holiday names, calendars, countries or currency
+                              LPCTSTR holidays,      ///< [in] is a (:_:) separated list of holiday names, calendars, countries or currency
                               LPLONG zDates,        ///< [in] is an array of holidays dates; each expressed as a serial number (i.e. number of days since 1.1.1970)
                               size_t nSize,         ///< [in] is the number of holiday dates.
                               WORD   wkndNo,        ///< [in] is the weekend number (1-7,11-17). If missing, the western weekend (i.e. 1, "Saturday, Sunday") is used. 
@@ -121,7 +122,7 @@ extern "C"
   *   \sa SFDB_DTADJUST()
   */
   int __stdcall SFDB_ISWRKDY(LONG argDate,        ///< [in] is a serial date number that represents a given date
-                             LPCSTR holidays,     ///< [in] is a (:_:) separated list of holiday names, calendars, countries or currency
+                             LPCTSTR holidays,     ///< [in] is a (:_:) separated list of holiday names, calendars, countries or currency
                              LPLONG zDates,       ///< [in] is an array of holidays dates; each expressed as a serial number (i.e. number of days since 1.1.1970)  
                              size_t nSize,        ///< [in] is the number of holiday dates in zDates.
                              WORD   wkndNo        ///< [in] is the weekend number (1-7,11-17). If missing, the western weekend (i.e. 1, "Saturday, Sunday") is used.
@@ -136,7 +137,7 @@ extern "C"
   */
   int __stdcall SFDB_NETWRKDYS( LONG argStartDate,  ///< [in] is a serial date number that represents start date
                                 LONG argEndDate,    ///< [in] is a serial date number that represents finish date
-                                LPCSTR holidays,    ///< [in] is a (:_:) separated list of holiday names, calendars, countries or currency
+                                LPCTSTR holidays,    ///< [in] is a (:_:) separated list of holiday names, calendars, countries or currency
                                 LPLONG zDates,      ///< [in] is an array of holidays dates; each expressed as a serial number (i.e. number of days since 1.1.1970)  
                                 size_t nSize,       ///< [in] is the number of holiday dates in zDates.
                                 WORD   wkndNo,      ///< [in] is the weekend number (1-7,11-17). If missing, the western weekend (i.e. 1, "Saturday, Sunday") is used.
@@ -152,7 +153,7 @@ extern "C"
   */
   int __stdcall SFDB_WORKDAY( LONG argDate,       ///< [in] is a serial date number that represents a given date
                               short days,         ///< [in] is the number of workdays to advance
-                              LPCSTR holidays,    ///< [in] is a (:_:) separated list of holiday names, calendars, countries or currency
+                              LPCTSTR holidays,    ///< [in] is a (:_:) separated list of holiday names, calendars, countries or currency
                               LPLONG zDates,      ///< [in] is an array of holidays dates; each expressed as a serial number (i.e. number of days since 1.1.1970)  
                               size_t nSize,       ///< [in] is the number of holiday dates in zDates.
                               WORD   wkndNo,      ///< [in] is the weekend number (1-7,11-17). If missing, the western weekend (i.e. 1, "Saturday, Sunday") is used.
@@ -168,7 +169,7 @@ extern "C"
   *   \retval #NDK_FAILED Operation unsuccessful. See \ref SFMacros.h for more details.
   *   \sa SFDB_FindHLDY()
   */
-  int __stdcall SFDB_ISVALIDHLDYCODE(LPCSTR argCode /*!< [in] is the given holiday code */);
+  int __stdcall SFDB_ISVALIDHLDYCODE(LPCTSTR argCode /*!< [in] is the given holiday code */);
 
   /*! 
   *   \brief Returns an array of the matching supported holiday codes.
@@ -177,8 +178,8 @@ extern "C"
   *   \retval #NDK_FAILED Operation unsuccessful. See \ref SFMacros.h for more details.
   *   \sa SFDB_FindHLDY()
   */
-  int __stdcall SFDB_HLDYS( LPCSTR argHolidays,   ///< [in] is the holiday name/prefix to search for. If missing, the full list of holidays will be returned. 
-                            LPSTR retVal,         ///< [out] is a (:_:) separated list of holiday names.
+  int __stdcall SFDB_HLDYS( LPCTSTR argHolidays,   ///< [in] is the holiday name/prefix to search for. If missing, the full list of holidays will be returned. 
+                            LPTSTR retVal,         ///< [out] is a (:_:) separated list of holiday names.
                             size_t* nLen          ///< [inout] maximum number of characters to copy to the buffer. 
                             );
   
@@ -191,8 +192,8 @@ extern "C"
   *   \sa SFDB_ISWRKDY()
   */
   int __stdcall SFDB_FindHLDY(LONG argDate,       ///< [in] is a serial date number that represents a given date
-                              LPCSTR argHolidays, ///< [in] is a (:_:) separated list of holiday codes
-                              LPSTR retVal,       ///< [out] is the holiday code that falls on the given date
+                              LPCTSTR argHolidays, ///< [in] is a (:_:) separated list of holiday codes
+                              LPTSTR retVal,       ///< [out] is the holiday code that falls on the given date
                               size_t* nLen        ///< [inout] maximum number of characters to copy to the buffer. 
                               );
 
@@ -204,8 +205,8 @@ extern "C"
   *   \retval #NDK_FAILED Operation unsuccessful. See \ref SFMacros.h for more details.
   *   \sa SFDB_ISWRKDY()
   */
-  int __stdcall SFDB_HLDYName(LPCSTR code,      ///< [in] is the given holiday short code
-                              LPSTR retVal,     ///< [out] is the holiday code that falls on the given date
+  int __stdcall SFDB_HLDYName(LPCTSTR code,      ///< [in] is the given holiday short code
+                              LPTSTR retVal,     ///< [out] is the holiday code that falls on the given date
                               size_t* nLen      ///< [inout] maximum number of characters to copy to the buffer.
                               );
 
@@ -219,7 +220,7 @@ extern "C"
   int __stdcall SFDB_HLDYDate(LONG argDate,       ///< [in] is a serial date number that represents a given date
                               LPLONG zdates,      ///< [in] is an array of holidays dates; each expressed as a serial number (i.e. number of days since 1.1.1970) 
                               size_t nLen,        ///< [in] is the number of holiday dates.
-                              LPCSTR szHolidays,  ///< [in] is a (:_:) separated list of holiday codes
+                              LPCTSTR szHolidays,  ///< [in] is a (:_:) separated list of holiday codes
                               WORD retType,       ///< [in] is a switch to select the return output (1 = next holiday, 2= last holiday). 
                               LPLONG retVal       ///< [out] is the returned serial date number that represents the holiday.
                               );
@@ -236,7 +237,7 @@ extern "C"
   int __stdcall SFDB_ISHLDY(LONG argDate,       ///< [in] is a serial date number that represents a given date
                             LPLONG zdates,      ///< [in] is an array of holidays dates; each expressed as a serial number (i.e. number of days since 1.1.1970)  
                             size_t nLen,        ///< [in] is the number of holiday dates.
-                            LPCSTR szHolidays  ///< [in] is a (:_:) separated list of holiday codes 
+                            LPCTSTR szHolidays  ///< [in] is a (:_:) separated list of holiday codes 
                             );                  
 
 
@@ -251,11 +252,19 @@ extern "C"
                                LONG argEndDate,   ///< [in] is a serial date number that represents finish date
                                LPLONG zdates,     ///< [in] is an array of holidays dates; each expressed as a serial number (i.e. number of days since 1.1.1970)  
                                size_t nLen,       ///< [in] is the number of holiday dates.
-                               LPCSTR szHolidays, ///< [in] is a (:_:) separated list of holiday codes 
+                               LPCTSTR szHolidays, ///< [in] is a (:_:) separated list of holiday codes 
                                LPLONG retVal,     ///< [out] is an array for the holiday dates 
                                size_t* nSize      ///< [inout] is the maximum number of elements in the output array.
                                );
   /// @}
+
+
+  int __stdcall SFDB_ONEHLDYDates(LONG argStartDate, ///< [in] is a serial date number that represents start date 
+                                  LONG argEndDate,   ///< [in] is a serial date number that represents finish date
+                                  LPCTSTR szHoliday, ///< [in] is a holiday code (e.g. USA-MLK, CHN-CNY, etc.) 
+                                  LPLONG retVal,     ///< [out] is an array for the holiday dates 
+                                  size_t* nSize      ///< [inout] is the maximum number of elements in the output array.
+    );
 
 
   /// \name Weekend APIs
@@ -270,7 +279,7 @@ extern "C"
   *   \retval See \ref SFMacros.h for more details.
   *   \sa SFDB_WKNDNo()
   */
-  int __stdcall SFDB_ISVALIDWKND(LPCSTR szCode /*!< [in] is the given weekend code or number*/);
+  int __stdcall SFDB_ISVALIDWKND(LPCTSTR szCode /*!< [in] is the given weekend code or number*/);
 
 
   /*! 
@@ -281,7 +290,7 @@ extern "C"
   *   \sa SFDB_WKNDNo()
   */
   int __stdcall SFDB_WKNDCode(WORD argNumber,   ///< [in]  is the weekend number (1-7, 11-17). 
-                              LPSTR retVal,     ///< [out] is the buffer that will receive the string code
+                              LPTSTR retVal,     ///< [out] is the buffer that will receive the string code
                               size_t* nLen      ///< [inout] is the maximum number of characters to copy to the buffer.
                               );
 
@@ -292,7 +301,7 @@ extern "C"
   *   \retval #NDK_FAILED Operation unsuccessful. See \ref SFMacros.h for more details.
   *   \sa SFDB_ISWRKDY()
   */
-  int __stdcall SFDB_WKNDNo(LPCSTR argCode,     ///< [in] is the weekend 7-character string code.
+  int __stdcall SFDB_WKNDNo(LPCTSTR argCode,    ///< [in] is the weekend 7-character string code.
                             LPWORD nNo          ///< [out] is the weekend number (1-7, 11-17).
                             );
 
@@ -305,7 +314,7 @@ extern "C"
   *   \sa SFDB_ISWRKDY()
   */
   int __stdcall SFDB_ISWKND(LONG argDate,       ///< [in] is a serial date number that represents a given date
-                            LPCSTR holidays,    ///< [in] is a (:_:) separated list of holiday codes
+                            LPCTSTR holidays,   ///< [in] is a (:_:) separated list of holiday codes
                             LPLONG  zDates,     ///< [in] is an array of holidays dates; each expressed as a serial number (i.e. number of days since 1.1.1970) 
                             size_t nSize,       ///< [in] is the number of holiday dates in zDates
                             WORD  nWkndNo,      ///< [in] is the weekend number (1-7, 11-17). 
@@ -323,7 +332,7 @@ extern "C"
   *   \sa SFDB_ISWRKDY()
   */
   int __stdcall SFDB_WKNDur(LONG argDate,       ///< [in] is a serial date number that represents a given date
-                            LPCSTR holidays,    ///< [in] is a (:_:) separated list of holiday codes
+                            LPCTSTR holidays,   ///< [in] is a (:_:) separated list of holiday codes
                             LPLONG  zDates,     ///< [in] is an array of holidays dates; each expressed as a serial number (i.e. number of days since 1.1.1970) 
                             size_t nSize,       ///< [in] is the number of holiday dates in zDates
                             WORD  nWkndNo,      ///< [in] is the weekend number (1-7, 11-17). 
@@ -338,7 +347,7 @@ extern "C"
   *   \sa SFDB_ISWRKDY()
   */
   int __stdcall SFDB_WKNDate(LONG argDate,      ///< [in] is a serial date number that represents a given date
-                             LPCSTR holidays,   ///< [in] is a (:_:) separated list of holiday codes
+                             LPCTSTR holidays,  ///< [in] is a (:_:) separated list of holiday codes
                              LPLONG  zDates,    ///< [in] is an array of holidays dates; each expressed as a serial number (i.e. number of days since 1.1.1970) 
                              size_t nSize ,     ///< [in] is the number of holiday dates in zDates
                              WORD  wkndNo,      ///< [in] is the weekend number (1-7, 11-17). 
@@ -360,7 +369,7 @@ extern "C"
   *   \retval #NDK_FAILED . For other codes, see \ref SFMacros.h
   *   \sa SFMacros.h, SFDB_FindHLDY()
   */
-  int __stdcall SFDB_ISVALIDCALCODE(LPCSTR argCode /*!< [in] is the given calendar code */);
+  int __stdcall SFDB_ISVALIDCALCODE(LPCTSTR argCode /*!< [in] is the given calendar code */);
 
 
   /*! 
@@ -370,8 +379,8 @@ extern "C"
   *   \retval Error code
   *   \sa SFMacros.h, SFDB_ISWRKDY()
   */
-  int __stdcall SFDB_CALNAME(LPCSTR argCode,  ///< [in]   is the calendar short code.
-                             LPSTR retVal,    ///< [out] is the buffer that will receive the calendar name
+  int __stdcall SFDB_CALNAME(LPCTSTR argCode, ///< [in]   is the calendar short code.
+                             LPTSTR retVal,   ///< [out] is the buffer that will receive the calendar name
                              size_t* nLen     ///< [inout] is the maximum number of characters to copy to the buffer.
                              );
 
@@ -382,8 +391,8 @@ extern "C"
   *   \retval Error code
   *   \sa SFMacros.h, SFDB_ISWRKDY()
   */
-  int __stdcall SFDB_CALENDARS( LPCSTR argName,   ///< [in]  is the name or prefix of the calendar name. If missing, all supported calendars will be returned.
-                                LPSTR retVal,     ///< [out] is the buffer that will receive the comma-separated calendar codes
+  int __stdcall SFDB_CALENDARS( LPCTSTR argName,  ///< [in]  is the name or prefix of the calendar name. If missing, all supported calendars will be returned.
+                                LPTSTR retVal,    ///< [out] is the buffer that will receive the comma-separated calendar codes
                                 size_t* nLen,     ///< [inout] is the maximum number of characters to copy to the buffer.
                                 LPWORD nNumber    ///< [out] is the number of matching calendars
                                 );
@@ -395,8 +404,8 @@ extern "C"
   *   \retval Error code
   *   \sa SFMacros.h, SFDB_ISWRKDY()
   */
-  int __stdcall SFDB_CALHLDYS(LPCSTR argCalCode,  ///< [in] is the calendar code (e.g. US, NYSE, CBT), name or alias. If missing, the US Government calendar is used.
-                              LPSTR retVal,       ///< [out] is the buffer that will receive the comma-separated holidays codes
+  int __stdcall SFDB_CALHLDYS(LPCTSTR argCalCode, ///< [in] is the calendar code (e.g. US, NYSE, CBT), name or alias. If missing, the US Government calendar is used.
+                              LPTSTR retVal,      ///< [out] is the buffer that will receive the comma-separated holidays codes
                               size_t* nLen,       ///< [inout] is the maximum number of characters to copy to the buffer.
                               LPWORD nNumber      ///< [out] is the number of holidays returned.
                               );
@@ -408,7 +417,7 @@ extern "C"
   *   \retval Error code
   *   \sa SFMacros.h, SFDB_ISWRKDY()
   */
-  int __stdcall SFDB_CALWKND(LPCSTR argCalCode,   ///< [in] is the calendar code (e.g. US, NYSE, CBT), name or alias. If missing, the US Government calendar is used.
+  int __stdcall SFDB_CALWKND(LPCTSTR argCalCode,  ///< [in] is the calendar code (e.g. US, NYSE, CBT), name or alias. If missing, the US Government calendar is used.
                              LPWORD nWKNDNo       ///< [out] is the weekend number (1-7, 11-17).
                              );
 
@@ -424,7 +433,7 @@ extern "C"
   *   \retval Error code
   *   \sa SFMacros.h, SFDB_ISWRKDY()
   */
-  int __stdcall SFDB_ISVALIDCNTRYCODE(LPCSTR szCode /*! [in] is the ISO country code (e.g. US, GB, USA, GBR, etc.) */);   
+  int __stdcall SFDB_ISVALIDCNTRYCODE(LPCTSTR szCode /*! [in] is the ISO country code (e.g. US, GB, USA, GBR, etc.) */);   
 
   /*! 
   *   \brief Return the weekend code (i.e. 7 characters)  associated with the given country
@@ -433,8 +442,8 @@ extern "C"
   *   \retval Error code
   *   \sa SFMacros.h, SFDB_ISWRKDY()
   */
-  int __stdcall SFDB_GETWKNDFROMCNTRY(LPCSTR szCode,  ///< [in] is the ISO country code (e.g. US, GB, USA, GBR, etc.) */
-                                      LPSTR retVal,   ///< [out] is the buffer that will receive the weekend code
+  int __stdcall SFDB_GETWKNDFROMCNTRY(LPCTSTR szCode, ///< [in] is the ISO country code (e.g. US, GB, USA, GBR, etc.) */
+                                      LPTSTR retVal,  ///< [out] is the buffer that will receive the weekend code
                                       size_t* nLen    ///< [inout] is the maximum number of characters to copy to the buffer.
                                       );   
 
@@ -445,8 +454,8 @@ extern "C"
   *   \retval Error code
   *   \sa SFMacros.h, SFDB_ISWRKDY()
   */
-  int __stdcall SFDB_GETCALFROMCNTRY( LPCSTR szCode,  ///< [in] is the ISO country code (e.g. US, GB, USA, GBR, etc.) */
-                                      LPSTR retVal,   ///< [out] is the buffer that will receive the calendar code
+  int __stdcall SFDB_GETCALFROMCNTRY( LPCTSTR szCode, ///< [in] is the ISO country code (e.g. US, GB, USA, GBR, etc.) */
+                                      LPTSTR retVal,  ///< [out] is the buffer that will receive the calendar code
                                       size_t* nLen    ///< [inout] is the maximum number of characters to copy to the buffer.
                                       );
   /// @}
@@ -460,14 +469,14 @@ extern "C"
   *   \return NDK_SUCCESS for valid currency code,else NDK_FAILED
   *   \sa SFDB_GETWKNDFROMCCY(), SFDB_GETCALFROMCCY()
   */
-  int __stdcall SFDB_ISVALIDCCYCODE(LPCSTR szCCY); 
+  int __stdcall SFDB_ISVALIDCCYCODE(LPCTSTR szCCY); 
                                     
   /*! \brief return the weekend code (7 characters) associated with the given currency
   *   \return status code of the function: NDK_SUCCESS or NDK_FAILED
   *   \sa SFDB_ISVALIDCCYCODE(), SFDB_GETCALFROMCCY()
   */
-  int __stdcall SFDB_GETWKNDFROMCCY(LPCSTR CCY,       ///< [in] is the ISO code of the currency (e.g. USD, JPY, tec.)
-                                    LPSTR retVal,     ///< [out] is the buffer that will receive the weekend code
+  int __stdcall SFDB_GETWKNDFROMCCY(LPCTSTR CCY,       ///< [in] is the ISO code of the currency (e.g. USD, JPY, tec.)
+                                    LPTSTR retVal,     ///< [out] is the buffer that will receive the weekend code
                                     size_t* nLen      ///< [inout] is the maximum number of characters to copy to the buffer.
                                     );
 
@@ -477,8 +486,8 @@ extern "C"
   *   \retval Error code (see SFMacros.h)
   *   \sa SFMacros.h, SFDB_GETWKNDFROMCCY(), SFDB_ISVALIDCCYCODE()
   */
-  int __stdcall SFDB_GETCALFROMCCY( LPCSTR CCY,       ///<  [in] currency one ISO code (e.g. USD, JPY, tec.)
-                                    LPSTR retVal,     ///<  [out] is the buffer that will receive the calendar code
+  int __stdcall SFDB_GETCALFROMCCY( LPCTSTR CCY,      ///<  [in] currency one ISO code (e.g. USD, JPY, tec.)
+                                    LPTSTR retVal,    ///<  [out] is the buffer that will receive the calendar code
                                     size_t* nLen      ///<  [inout] is the maximum number of characters to copy to the buffer.
                                     );
 
@@ -491,10 +500,10 @@ extern "C"
   *   \retval Error code (see SFMacros.h)
   *   \sa SFDB_ISVALIDCCYCODE()
   */
-  int __stdcall SFDB_GETVALIDCCYPAIR(LPCSTR CCY1,   ///< [in] currency one ISO code (e.g. USD, JPY, tec.)
-                                     LPCSTR CCY2,   ///< [in] currency two ISO code (e.g. USD, JPY, tec.)
-                                     LPSTR szPair,  ///< [out] is the buffer that will receive the formatted currency pair
-                                     size_t* nLen   ///< [inout] is the maximum number of characters to copy to the buffer.
+  int __stdcall SFDB_GETVALIDCCYPAIR(LPCTSTR CCY1,   ///< [in] currency one ISO code (e.g. USD, JPY, tec.)
+                                     LPCTSTR CCY2,   ///< [in] currency two ISO code (e.g. USD, JPY, tec.)
+                                     LPTSTR szPair,  ///< [out] is the buffer that will receive the formatted currency pair
+                                     size_t* nLen    ///< [inout] is the maximum number of characters to copy to the buffer.
                                      );
   ///@}
 }

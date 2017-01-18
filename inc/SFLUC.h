@@ -3,16 +3,15 @@
 *  @{
 *  \file SFLUC.h
 * 
-*  \copyright (c) 2007-2014 Spider Financial Corp.
-*  All rights reserved.
+*  \copyright © Spider Financial Corp - All rights reserved.
+*       Unauthorized copying of this file, via any medium is strictly prohibited
+*  	    Proprietary and confidential
 *  \brief  header file for the public API of SFLUC library 
 *  \details  License system support for NumXL SDK
-*  \copyright (c) 2007-2014 Spider Financial Corp.
-*             All rights reserved.
 *  \author Spider Financial Corp
 *  \version 1.62
-*  $Revision: 12362 $
-*  $Date: 2012-10-26 18:12:09 -0500 (Fri, 26 Oct 2012) $
+*  $Revision: 15834 $
+*  $Date: 2016-08-25 13:54:04 -0500 (Thu, 25 Aug 2016) $
 */
 #pragma once
 
@@ -28,8 +27,8 @@ extern "C"
   *   \retval Error code
   *   \sa SFMacros.h, SFLUC_Shutdown()
   */
-  int   __stdcall SFLUC_Init( LPCSTR szAppName,             ///<  [in] application name (user-defined), but must match the configuration base filename
-                              LPCSTR szLogDir,              ///<  [in, optional] absolute path of the log file directory. If NULL, LUC uses the default temp directory in the current user's profile
+  int   __stdcall SFLUC_Init( LPCTSTR szAppName,             ///<  [in] application name (user-defined), but must match the configuration base filename
+                              LPCTSTR szLogDir,              ///<  [in, optional] absolute path of the log file directory. If NULL, LUC uses the default temp directory in the current user's profile
                               BOOL bEnableGracePeriod       ///<  [in] allow program to run for 7 days in the case the license key is missing
                               );                            
 
@@ -72,7 +71,7 @@ extern "C"
   *   \retval Error code
   *   \sa SFMacros.h, SFLUC_CHECK_LICENSE()
   */
-  int   __stdcall SFLUC_MACHINEID(  LPSTR szBuffer,   ///< [out]  Machine or Host Id
+  int   __stdcall SFLUC_MACHINEID(  LPTSTR szBuffer,   ///< [out]  Machine or Host Id
                                     size_t* nLen      ///< [inout] maximum number of characters to copy to the buffer. 
                                     );
 
@@ -83,7 +82,7 @@ extern "C"
   *   \retval Error code
   *   \sa SFMacros.h, SFLUC_LICENSE_KEY(),SFLUC_ACTIVATION_CODE()
   */
-  int   __stdcall SFLUC_LICENSE_KEY(LPSTR szBuffer,     ///< [out]  The buffer that will receive the License key
+  int   __stdcall SFLUC_LICENSE_KEY(LPTSTR szBuffer,     ///< [out]  The buffer that will receive the License key
                                     size_t* nLen        ///< [inout] maximum number of characters to copy to the buffer.
                                     );
 
@@ -103,7 +102,7 @@ extern "C"
   *   \retval Error code
   *   \sa SFMacros.h, SFLUC_Init()
   */
-  int   __stdcall SFLUC_ACTIVATION_CODE(LPSTR szCode,   ///< [out]  The buffer that will receive the activation code
+  int   __stdcall SFLUC_ACTIVATION_CODE(LPTSTR szCode,   ///< [out]  The buffer that will receive the activation code
                                         size_t* nLen    ///< [inout] maximum number of characters to copy to the buffer (minimum 32-character).
                                         );
   /*! 
@@ -122,8 +121,8 @@ extern "C"
   *   \retval Warning or Error code
   *   \sa SFMacros.h, SFLUC_CHECK_KEYCODE()
   */
-  int   __stdcall SFLUC_LICENSE_EXPIRY( LPCSTR szKey,               ///< [in] License key
-                                        LPCSTR szActivationCode,    ///< [in] Activation code
+  int   __stdcall SFLUC_LICENSE_EXPIRY( LPCTSTR szKey,               ///< [in] License key
+                                        LPCTSTR szActivationCode,    ///< [in] Activation code
                                         unsigned long* expiry       ///< [out] expiration date expressed as number of days since January 1st, 1970 
                                         );
 
@@ -134,9 +133,9 @@ extern "C"
   *   \retval Warning or Error code
   *   \sa SFMacros.h, SFLUC_LICENSE_EXPIRY(), SFLUC_LICENSE_LEVEL()
   */
-  int   __stdcall SFLUC_CHECK_KEYCODE(LPCSTR PDKey,                 ///< [in] Product key (i.e. 31223-200-162)
-                                      LPCSTR szKey,                 ///< [in] License key
-                                      LPCSTR szActCode,             ///< [in] Activation code
+  int   __stdcall SFLUC_CHECK_KEYCODE(LPCTSTR PDKey,                 ///< [in] Product key (i.e. 31223-200-162)
+                                      LPCTSTR szKey,                 ///< [in] License key
+                                      LPCTSTR szActCode,             ///< [in] Activation code
                                       ULONG* ulExpiry,              ///< [out] expiration date expressed as number of days since January 1st, 1970
                                       int* nLevel                   ///< [out] Effective license level: 1=Limited, 2=Full/Pro
                                       );
@@ -150,11 +149,11 @@ extern "C"
   *   \retval Warning or Error code
   *   \sa SFMacros.h, SFLUC_SERVICEDATE()
   */
-  int  __stdcall SFLUC_UPDATEVERSION(LPCSTR szLicenseKey,           ///< [in] License key
-                                      LPCSTR szFileVersion,         ///< [in] is the long file version (1.XX.XXXX.X)
-                                      LPSTR updateVersion,          ///< [out] is the available most recent version available
+  int  __stdcall SFLUC_UPDATEVERSION(LPCTSTR szLicenseKey,           ///< [in] License key
+                                      LPCTSTR szFileVersion,         ///< [in] is the long file version (1.XX.XXXX.X)
+                                      LPTSTR updateVersion,          ///< [out] is the available most recent version available
                                       size_t* pVerSize,             ///< [inout] is the original size of the output buffer
-                                      LPSTR downloadURL,            ///< [out] is the download URL version
+                                      LPTSTR downloadURL,            ///< [out] is the download URL version
                                       size_t* pURLSize              ///< [inout] is the size of "downloadURL" buffer
                                       );
 
@@ -165,9 +164,23 @@ extern "C"
   *   \retval Warning or Error code
   *   \sa SFLUC_UPDATEVERSION(), SFLUC_LICENSE_LEVEL()
   */
-  int  __stdcall SFLUC_SERVICEDATE(LPCSTR szLicenseKey,             ///< [in] is the license key
+  int  __stdcall SFLUC_SERVICEDATE(LPCTSTR szLicenseKey,             ///< [in] is the license key
                                    LPLONG serviceDate               ///< [out] is the serial date number of the service/support expiry date
                                    );
 
+
+  /*!
+  *   \brief Query and retrieve the recent activation code for a given license
+  *   \return status code of the operation
+  *   \retval NDK_SUCCESS Operation successful
+  *   \retval Warning or Error code
+  *   \sa SFLUC_UPDATEVERSION(), SFLUC_LICENSE_LEVEL()
+  */
+  int  __stdcall SFLUC_ACTIVATE_LICENSE(LPCTSTR szLicenseKey,       ///< [in] License key
+                                        LPCTSTR szEmail,            ///< [in] E-Mail address
+                                        LPCTSTR szProdCode,         ///< [in] product code (e.g. 3223-200)
+                                        LPTSTR szActivationCode,    ///< [out] Activation code
+                                        size_t* puSize              ///< [in,out] Length of the Activation code buffer, and returns number of character used.
+                                        );
 }
 /// @}

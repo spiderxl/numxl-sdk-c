@@ -36,10 +36,10 @@ int test_tesmth(void);
 int _tmain(int argc, _TCHAR* argv[])
 {
   // Let's get the library version number
-  char szVersion[100];
+  TCHAR szVersion[100];
   int nRet=-1;
 
-  std::cout  << "(c) 2009-2014 Spider Financial Corp." << std::endl;
+  std::cout  << "(c) 2009-2016 Spider Financial Corp." << std::endl;
   std::cout  << "All rights reserved." << std::endl;
   std::cout  <<  std::endl;
   std::cout  <<  "Phone:    (312) 324-0366" << std::endl;
@@ -48,8 +48,10 @@ int _tmain(int argc, _TCHAR* argv[])
   std::cout  <<  std::endl;
   std::cout << "*******************************************************" << std::endl;
 
+  wmemset(szVersion, TCHAR(0x00), 100);
+
   // (1) Initialize the NumXL SDK environment
-  std::string szAppName("TestApp");
+  std::wstring szAppName(L"TestApp");
 
   // log/data directory NULL == Use user's temp folder in his/her profile
   nRet = NDK_Init(szAppName.c_str(), NULL, NULL ,NULL /*Log Directory*/);
@@ -61,31 +63,37 @@ int _tmain(int argc, _TCHAR* argv[])
     nRet = NDK_INFO(1, szVersion, 100);
     if( nRet == NDK_SUCCESS)
     {
-      cout << "NumXL SDK version:" << szVersion << std::endl;
+      std::wcout << TEXT("NumXL SDK version:") << szVersion << std::endl;
 
       // (2) Release Name
+      wmemset(szVersion, TCHAR(0x00), 100);
       nRet = NDK_INFO(2, szVersion, 100);
-      cout << "NumXL SDK Release:" << szVersion << std::endl;
+      std::wcout << L"NumXL SDK Release:" << szVersion << std::endl;
 
       // (3) License key
+      wmemset(szVersion, TCHAR(0x00), 100);
       nRet = NDK_INFO(3, szVersion, 100);
-      cout << "NumXL SDK License Key:" << szVersion << std::endl;
+      std::wcout << L"NumXL SDK License Key:" << szVersion << std::endl;
 
       // (4) License key
+      wmemset(szVersion, TCHAR(0x00), 100);
       nRet = NDK_INFO(4, szVersion, 100);
-      cout << "NumXL SDK License Key Level:" << szVersion << std::endl;
+      std::wcout << L"NumXL SDK License Key Level:" << szVersion << std::endl;
 
       // (5) License key
+      wmemset(szVersion, TCHAR(0x00), 100);
       nRet = NDK_INFO(5, szVersion, 100);
-      cout << "NumXL SDK License key expiry date:" << szVersion << std::endl;
+      std::wcout << L"NumXL SDK License key expiry date:" << szVersion << std::endl;
 
       // (6) Installation path
+      wmemset(szVersion, TCHAR(0x00), 100);
       nRet = NDK_INFO(6, szVersion, 100);
-      cout << "NumXL SDK is installed at:" << szVersion << std::endl;
+      std::wcout << L"NumXL SDK is installed at:" << szVersion << std::endl;
 
       // (7) data/log path
+      wmemset(szVersion, TCHAR(0x00), 100);
       nRet = NDK_INFO(7, szVersion, 100);
-      cout << "NumXL SDK logs are found in:" << szVersion << std::endl;
+      std::wcout << L"NumXL SDK logs are found in:" << szVersion << std::endl;
     }
     std::cout  <<  std::endl;
 
@@ -148,7 +156,7 @@ int _tmain(int argc, _TCHAR* argv[])
 
   std::cout << "*******************************************************" << std::endl;
   nRet = NDK_INFO(8, szVersion, 100);
-  std::cout << "Your computer Machine ID is: " << szVersion << std::endl;
+  std::wcout << L"Your computer Machine ID is: " << szVersion << std::endl;
   std::cout << "Please, present the license key and the Machine ID to your NumXL support personnel" << std::endl;
 
   return 0;

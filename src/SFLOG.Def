@@ -2,11 +2,12 @@
 ;*  (c) 2007-2014 Spider Financial Corp.
 ;*  All rights reserved.
 ;*  
-;*  $Revision: 12310 $
-;*  $Date: 2012-10-12 10:39:24 -0500 (Fri, 12 Oct 2012) $
+;*  $Revision: 15249 $
+;*  $Date: 2016-05-03 10:15:33 -0500 (Tue, 03 May 2016) $
 ;*/
 
-VERSION		1.63
+VERSION		1.64
+LIBRARY   SFLOG.dll
 
 ;  entryname[=internalname] [@ordinal [NONAME]] [PRIVATE] [DATA]
 EXPORTS

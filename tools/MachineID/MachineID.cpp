@@ -14,10 +14,10 @@
 int _tmain(int argc, _TCHAR* argv[])
 {
   // Let's get the library version number
-  char szVersion[100];
+  TCHAR szVersion[100];
   int nRet=-1;
 
-  std::cout  << "(c) 2009-2014 Spider Financial Corp." << std::endl;
+  std::cout  << "(c) 2009-2016 Spider Financial Corp." << std::endl;
   std::cout  << "All rights reserved." << std::endl;
   std::cout  <<  std::endl;
   std::cout  <<  "Phone:    (312) 324-0366" << std::endl;
@@ -26,19 +26,20 @@ int _tmain(int argc, _TCHAR* argv[])
   std::cout  <<  std::endl;
   std::cout << "*******************************************************" << std::endl;
 
-  std::string szAppName("TestApp");
+  std::wstring szAppName(TEXT("TestApp"));
 
  // (1) Retrieve the machine ID
   size_t nLen = 100;
-  memset(szVersion,0x00, nLen);
+  wmemset(szVersion, TCHAR(0x00), nLen);
+
   nRet = SFLUC_MACHINEID( szVersion, &nLen);
   if( nRet >= NDK_SUCCESS)
   {
-    std::cout << "Machine Id:" << szVersion << std::endl;
+    std::wcout << TEXT("Machine Id:") << szVersion << std::endl;
   }
   else
   {
-    std::cout << "Error in retrieving the machine Id: <Error>" << std::endl;
+    std::wcout << TEXT("Error in retrieving the machine Id: <Error>") << std::endl;
   }
 
 	return 0;
